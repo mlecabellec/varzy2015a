@@ -8,7 +8,10 @@
 module.exports = {
 
   attributes: {
-
+      id:{type:"integer",unique:true,primaryKey:true},
+      content:{type:"text",size:4000},
+      user:{model:"AppUser",protected:true},
+      userProfile:{model:"UserProfile"},
+      thread:{model:"UserThread"}
   }
 };
-

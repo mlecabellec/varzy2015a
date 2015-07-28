@@ -5,58 +5,42 @@
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 
-module.exports = {
 
-  attributes: {
+ var cryptoJS = require("crypto-js");
 
-    username: {
-      type: 'string',
-      unique: true,
-      size: 64,
-      required: true,
-      primaryKey: true
-    },
+ module.exports = {
+     attributes: {
+         username: {type: 'string', size: 64, minLength: 4, unique: true, primaryKey: true},
+         password: {type: 'string', size: 180, required: true, protected: true},
+         sessionkey: {type: 'string', size: 180, required: true, protected: true, unique: true},
+         isActive: {type: 'boolean', defaultsTo: true},
+         isAdmin: {type: 'boolean', defaultsTo: false},
+         email: {type: 'email', size: 180, minLength: 4, unique: true, required: true},
+         hitCount:{type: 'integer', defaultsTo: 0,required: true},
+         profiles:{
+             collection: 'UserProfile',
+             via: 'user'
+         }
+     },
+     beforeCreate: function (values, cb) {
 
-    secret1: {
-      type: 'string',
-      size: 254
-    },
+         values.sessionkey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
 
-    secret2: {
-      type: 'string',
-      size: 254
-    },
+         cb();
 
-    creationdate: {
-      type: 'datetime'
-    },
+     },
+     beforeUpdate: function (values, cb) {
 
-    locked: {
-      type: 'binary',
-      defaultsTo: false
-    },
+         values.sessionkey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
 
-    activated: {
-      type: 'binary',
-      defaultsTo: false
-    },
+         cb();
 
-    superadmin: {
-      type: 'binary',
-      defaultsTo: false
-    },
+     },
+     beforeValidate: function (values, cb) {
 
-    token: {
-      type: 'string',
-      size: 254,
-      unique: true
-    },
+         values.sessionkey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
 
-    userEmail: {
-      type: 'email',
-      size: 254,
-      unique: true
-    }
+         cb();
 
-  }
-};
+     }
+ };

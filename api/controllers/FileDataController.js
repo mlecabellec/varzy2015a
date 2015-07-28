@@ -6,7 +6,7 @@
  */
 
 module.exports = {
-	
+
 
 
   /**
@@ -38,4 +38,3 @@ module.exports = {
     });
   }
 };
-
