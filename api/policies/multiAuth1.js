@@ -1,4 +1,4 @@
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -15,7 +15,7 @@
  *
  */
 module.exports = function (req, res, next) {
-    // User is allowed, proceed to the next policy, 
+    // User is allowed, proceed to the next policy,
     // or if this is the last policy, the controller
 
     var authData = {
@@ -32,7 +32,7 @@ module.exports = function (req, res, next) {
 
     if (req.cookies.authenticated) {
 
-        ChatonUser.findOne({sessionkey: req.cookies.sessionkey}, function (err, cUser) {
+        AppUser.findOne({sessionkey: req.cookies.sessionkey}, function (err, cUser) {
 
             if (err !== null)
             {
@@ -94,7 +94,7 @@ module.exports = function (req, res, next) {
 
     if (req.session.authenticated) {
 
-        ChatonUser.findOne({sessionkey: req.session.sessionkey}, function (err, cUser) {
+        AppUser.findOne({sessionkey: req.session.sessionkey}, function (err, cUser) {
 
             if (err !== null)
             {
@@ -176,7 +176,7 @@ module.exports = function (req, res, next) {
         req.session.authenticated = true;
         req.session.sessionkey = "";
         req.session.username = "";
-        
+
         return res.forbidden(authData);
     }
 
