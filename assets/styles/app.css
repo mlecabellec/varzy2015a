@@ -1,0 +1,39 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 26 mars 2015, 17:24:10
+    Author     : vortigern
+*/
+
+div.banner {
+    height: 150px;
+    margin-left: 0px ;
+    margin-right: 0px ;
+    padding-left: 0px ;
+    padding-right: 0px ;
+    width:100%;
+    background-color:#162e74;
+    opacity:1.0;
+    overflow: hidden ;
+}
+
+svg.banner {
+    height: 400px;
+    margin-top:-200px;
+    margin-left: 0px ;
+    margin-right: 0px ;
+    padding-left: 0px ;
+    padding-right: 0px ;
+    width:100%;
+
+}
+
+.testCircle {
+    fill:#c7d2f1;
+    fill-opacity:1.0;
+    stroke:none;
+
+}
