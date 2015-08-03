@@ -26,7 +26,16 @@ module.exports.policies = {
   *                                                                          *
   ***************************************************************************/
 
-  // '*': true,
+    '*': false,
+    UserMessageController: {
+        "*": "multiAuth1"
+    },
+    AuthenticationController: {
+        "*": true
+    },
+    UserThreadController: {
+        "*": "multiAuth1"
+    }
 
   /***************************************************************************
   *                                                                          *
