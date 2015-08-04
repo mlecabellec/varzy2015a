@@ -1,5 +1,12 @@
 {
 	"Welcome": "Bienvenue",
 	"A brand new app.": "Une toute nouvelle application.",
-	"appName": "Varzy"
+	"appName": "Varzy",
+	"Log in": "Identification",
+	"User's name": "Identifiant",
+	"Password": "Mot de passe",
+	"Remember me": "Se souvenir",
+	"Sign me": "S'identifier",
+	"Username": "Identifiant",
+	"cancel": "Annuler"
 }
