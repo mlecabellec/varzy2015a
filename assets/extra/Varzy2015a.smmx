@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="UTF-8"?><simplemind-mindmaps doc-version="3" generator="SimpleMindAndroid" gen-version="1.9.8">
+<mindmap>
+<meta>
+<guid guid="2830442012B28A8DBB74A112D3D88BC5"/>
+<title text="Varzy2015a"/>
+<style key="system.soft-palette"/>
+<auto-numbering style="disabled"/>
+<scrollstate zoom="96" x="-440.0" y="-564.0"/>
+<selection guid="ZUDQ5LA0VXLAsQ1JiIr5oA" type="node" id="0"/>
+<main-centraltheme id="0"/>
+</meta>
+<topics>
+<topic id="0" parent="-1" guid="ZUDQ5LA0VXLAsQ1JiIr5oA" x="0.0" y="0.0" palette="1" colorinfo="1" text="Varzy2015a"/>
+<topic id="1" parent="0" guid="8xJfzdG0gBvnftstmoUrrw" x="98.24179" y="56.719925" palette="2" colorinfo="2" text="Concepts"/>
+<topic id="2" parent="1" guid="OsgaRsWYzx-tOozUmFdFYg" x="181.60718" y="104.85095" text="Messages"/>
+<topic id="3" parent="1" x="212.89804" y="36.502945" text="Threads"/>
+<topic id="4" parent="1" x="127.21894" y="164.8641" text="Users"/>
+<topic id="5" parent="1" x="263.17944" y="151.94673" text="Files"/>
+<topic id="6" parent="1" guid="PWTF-ZmWMmS-NlmXHrPCww" x="345.51184" y="56.719925" text="Access list entry"/>
+<topic id="7" parent="1" x="196.38696" y="226.71237" text="Group membership"/>
+<topic id="8" parent="0" guid="Kw6d1PVX21MWQz6ONKqWvA" x="-98.76138" y="-57.019913" palette="3" colorinfo="3" text="Use cases"/>
+<topic id="9" parent="8" x="-181.23718" y="-104.63736" text="Register"/>
+<topic id="10" parent="8" guid="uuI3D2SXkBa4p4PdiXWAfA" x="-234.16118" y="-45.17401" text="Authenticate"/>
+<topic id="11" parent="8" guid="5JZYcUwWW8_c-F2LQBG-Fg" x="-127.79477" y="-165.374" text="View public thread"/>
+<topic id="12" parent="8" guid="KcI61aWC8IYvwH3nYtAhRw" x="-284.1739" y="-143.47923" text="View thread"/>
+<topic id="13" parent="12" guid="1ZGZnCRMCNtPB1pDHAH1iA" x="-379.05948" y="-187.72514" text="View message"/>
+<topic id="14" parent="13" x="-470.76468" y="-230.488" text="View file"/>
+<topic id="15" parent="12" guid="ZnL9SZRM8K_BQX5GHpcjOA" x="-411.65582" y="-109.3206" text="Load messages\Ndynamically"/>
+<topic id="16" parent="8" x="-196.85153" y="-226.91707" text="Create thread"/>
+<topic id="17" parent="8" guid="lnJcS2lu7hpm-mTLhX2upQ" x="-336.86823" y="6.780525" text="Create message"/>
+<topic id="18" parent="17" x="-449.54834" y="36.973022" text="Add file"/>
+</topics>
+<relations/>
+</mindmap>
+</simplemind-mindmaps>

@@ -1,0 +1,19 @@
+﻿Varzy2015a
+	Concepts
+		Messages
+		Threads
+		Users
+		Files
+		Access list entry
+		Group membership
+	Use cases
+		Register
+		Authenticate
+		View public thread
+		View thread
+			View message
+				View file
+			Load messages dynamically
+		Create thread
+		Create message
+			Add file
