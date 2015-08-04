@@ -51,14 +51,16 @@
 </div>
 <script type="text/javascript">
 
-    $("#test").html(JST["assets/templates/login.html"](
-            {i18n:
-                        {loginLabel: "<%= __('Log in') %>",
-                            usernameLabel: "<%= __('Username') %>",
-                            passwordLabel: "<%= __('Password') %>",
-                            rememberMeLabel: "<%= __('Remember me') %>",
-                            signMeLabel: "<%= __('Sign me') %>",
-                            cancelLabel: "<%= __('cancel') %>"}}
-    ));
-    $("#loginModal").modal("show");
+    APP.login.gui.loginModal.openModal(
+            {loginLabel: "<%= __('Log in') %>",
+                usernameLabel: "<%= __('Username') %>",
+                passwordLabel: "<%= __('Password') %>",
+                rememberMeLabel: "<%= __('Remember me') %>",
+                signMeLabel: "<%= __('Sign me') %>",
+                cancelLabel: "<%= __('cancel') %>"});
+
+
+
+
+
 </script>
