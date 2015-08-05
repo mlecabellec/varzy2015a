@@ -123,7 +123,8 @@ this.APP["home"] = this.APP["home"] || {
         APP.loadedModules = APP.loadedModules.concat(APP.home.moduleInfo);
     },
     gui: {
-        init: function init() {
+        init: function init(homeData) {
+            alert(homeData.message);
         }
     }
 };
