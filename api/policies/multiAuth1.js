@@ -28,7 +28,8 @@ module.exports = function (req, res, next) {
     };
 
 
-    console.log("multiAuth1, sails.sid: " + sails.sid);
+    //ultiAuth1, sails.sid: " + sails.sid);
+    sails.log.debug("multiAuth1, sails.sid: " + sails.sid);
 
     if (req.cookies.authenticated) {
 
@@ -36,7 +37,8 @@ module.exports = function (req, res, next) {
 
             if (err !== null)
             {
-                console.log("cookieAuth error: " + err);
+                //console.log("cookieAuth error: " + err);
+                sails.log.debug("cookieAuth error: " + err);
 
                 authData.hasCoockie = true;
                 //authData.hasSession = false;
@@ -50,7 +52,8 @@ module.exports = function (req, res, next) {
 
             if (cUser !== undefined)
             {
-                console.log("cookieAuth username: " + cUser.username);
+                //console.log("cookieAuth username: " + cUser.username);
+                sails.log.debug("cookieAuth username: " + cUser.username);
 
                 authData.hasCoockie = true;
                 //authData.hasSession = false;
@@ -62,7 +65,8 @@ module.exports = function (req, res, next) {
                 //return next();
             } else
             {
-                console.log("cookieAuth, problem with user: " + cUser);
+                //console.log("cookieAuth, problem with user: " + cUser);
+                sails.log.debug("cookieAuth, problem with user: " + cUser);
 
                 authData.hasCoockie = true;
                 //authData.hasSession = false;
@@ -79,7 +83,8 @@ module.exports = function (req, res, next) {
 
     } else
     {
-        console.log("cookieAuth, req.signedCookies.authenticated: " + req.cookies.authenticated);
+        //console.log("cookieAuth, req.signedCookies.authenticated: " + req.cookies.authenticated);
+        sails.log.debug("cookieAuth, req.signedCookies.authenticated: " + req.cookies.authenticated);
 
         authData.hasCoockie = false;
         //authData.hasSession = false;
@@ -98,7 +103,8 @@ module.exports = function (req, res, next) {
 
             if (err !== null)
             {
-                console.log("sessionAuth error: " + err);
+                //console.log("sessionAuth error: " + err);
+                sails.log.debug("sessionAuth error: " + err);
 
                 //authData.hasCoockie = false;
                 authData.hasSession = true;
@@ -112,7 +118,8 @@ module.exports = function (req, res, next) {
 
             if (cUser !== undefined)
             {
-                console.log("sessionAuth username: " + cUser.username);
+                //console.log("sessionAuth username: " + cUser.username);
+                sails.log.debug("sessionAuth username: " + cUser.username);
 
                 //authData.hasCoockie = false;
                 authData.hasSession = true;
@@ -124,7 +131,8 @@ module.exports = function (req, res, next) {
                 //return next();
             } else
             {
-                console.log("sessionAuth, problem with user: " + cUser);
+                //console.log("sessionAuth, problem with user: " + cUser);
+                sails.log.debug("sessionAuth, problem with user: " + cUser);
 
                 //authData.hasCoockie = false;
                 authData.hasSession = true;
@@ -141,7 +149,8 @@ module.exports = function (req, res, next) {
 
     } else
     {
-        console.log("sessionAuth, req.session.authenticated: " + req.session.authenticated);
+        //console.log("sessionAuth, req.session.authenticated: " + req.session.authenticated);
+        sails.log.debug("sessionAuth, req.session.authenticated: " + req.session.authenticated);
 
         //authData.hasCoockie = false;
         authData.hasSession = false;
@@ -156,6 +165,8 @@ module.exports = function (req, res, next) {
 
     if (authData.authenticated)
     {
+        //console.log("Authenticated");
+        sails.log.debug("Authenticated");
 
         //req.session.authenticated = true;
         //req.session.sessionkey = authData.sessionkey;
@@ -168,6 +179,8 @@ module.exports = function (req, res, next) {
         return next();
     } else
     {
+        //console.log("NOT authenticated");
+        sails.log.debug("NOT authenticated");
 
         res.clearCookie('authenticated');
         res.clearCookie('sessionkey');
@@ -177,7 +190,7 @@ module.exports = function (req, res, next) {
         req.session.sessionkey = "";
         req.session.username = "";
 
-        return res.forbidden(authData);
+        return res.forbidden(authData,"home1");
     }
 
 
