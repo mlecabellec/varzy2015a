@@ -11,16 +11,24 @@ module.exports = {
      */
     index: function (req, res) {
 
+
+        return res.view("home1");
+    },
+    data: function (req, res) {
+
+
         var data = {
-            message: "test !!"
+            message: "test001"
         };
-        return res.view("home1", data);
+        sails.log.debug(data);
+        return res.json(data);
     },
     /**
      * `HomeController.test()`
      */
     test: function (req, res) {
-        return res.view("home1", {homeData: {message: "oh oh !!!"}});
+
+        return res.view("home1");
     },
     /**
      * `HomeController.getthreads()`

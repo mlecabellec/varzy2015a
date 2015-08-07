@@ -179,127 +179,169 @@
       */
      check: function (req, res) {
 
-         var authStatus = {authenticated: false, usedCookies: false, usedSession: false, username: "guest", code: 9999};
-
-         if (req.cookies.authenticated) {
-
-             AppUser.findOne({sessionkey: req.cookies.sessionkey}, function (err, cUser) {
-
-                 if (err !== null)
-                 {
-                     console.log("check error: " + err);
-                     //return res.serverError("Error when finding user for authentication !!!");
-                     authStatus.code = 1010;
-                     try {
-                         return res.json(authStatus);
-                     } catch (ex)
-                     {
-                         console.log("res.json(authStatus) problem (5010)");
-                     }
-                 }
-
-                 if (cUser !== undefined)
-                 {
-                     console.log("check username: " + cUser.username);
-                     //return next();
-                     authStatus.authenticated = true;
-                     authStatus.usedCookies = true;
-                     authStatus.username = cUser.username;
-                     authStatus.code = 1020;
-                     try {
-                         return res.json(authStatus);
-                     } catch (ex)
-                     {
-                         console.log("res.json(authStatus) problem (5020)");
-                     }
-                 } else
-                 {
-                     console.log("check, problem with user: " + cUser);
-                     //return res.forbidden('You are not permitted to perform this action.');
-                     authStatus.code = 1030;
-                     try {
-                         return res.json(authStatus);
-                     } catch (ex)
-                     {
-                         console.log("res.json(authStatus) problem (5030)");
-                     }
-                 }
+        var authData = {
+            hasCoockie: false,
+            hasSession: false,
+            username: "",
+            sessionKey: "",
+            authenticated: false,
+            code: 9999,
+            message: "",
+            error: ""
+        };
 
 
-             });
+        //ultiAuth1, sails.sid: " + sails.sid);
+        sails.log.debug("AuthenticationController/check, sails.sid: " + sails.sid);
 
-         } else
-         {
-             console.log("check, req.signedCookies.authenticated: " + req.cookies.authenticated);
-             //return res.forbidden('You are not permitted to perform this action.');
-             authStatus.code = 1040;
-             try {
-                 return res.json(authStatus);
-             } catch (ex)
-             {
-                 console.log("res.json(authStatus) problem (5040)");
-             }
-         }
+        if (req.cookies.authenticated) {
 
-         if (req.session.authenticated) {
+            AppUser.findOne({sessionkey: req.cookies.sessionkey}, function (err, cUser) {
 
-             AppUser.findOne({sessionkey: req.session.sessionkey}, function (err, cUser) {
+                if (err !== null)
+                {
+                    //console.log("cookieAuth error: " + err);
+                    sails.log.debug("AuthenticationController/check, cookieAuth error: " + err);
 
-                 if (err !== null)
-                 {
-                     console.log("check error: " + err);
-                     //return res.serverError("Error when finding user for authentication !!!");
-                     authStatus.code = 1050;
-                     try {
-                         return res.json(authStatus);
-                     } catch (ex)
-                     {
-                         console.log("res.json(authStatus) problem (5060)");
-                     }
-                 }
+                    authData.hasCoockie = true;
+                    //authData.hasSession = false;
+                    //authData.username="";
+                    //authData.sessionKey= "";
+                    authData.authenticated = false;
+                    authData.code = 4010;
+                    authData.message = "4010: Invalid session";
+                    authData.error = "4010: Invalid session";
 
-                 if (cUser !== undefined)
-                 {
-                     console.log("check username: " + cUser.username);
-                     //return next();
-                     authStatus.authenticated = true;
-                     authStatus.usedSession = true;
-                     authStatus.username = cUser.username;
-                     authStatus.code = 1060;
-                     try {
-                         return res.json(authStatus);
-                     } catch (ex)
-                     {
-                         console.log("res.json(authStatus) problem (5070)");
-                     }
-                 } else
-                 {
-                     console.log("check, problem with user: " + cUser);
-                     //return res.forbidden('You are not permitted to perform this action.');
-                     authStatus.code = 1070;
-                     try {
-                         return res.json(authStatus);
-                     } catch (ex)
-                     {
-                         console.log("res.json(authStatus) problem (5080)");
-                     }
-                 }
+                    //return res.serverError("Error when finding user for authentication !!!");
+                }
+
+                if (cUser !== undefined)
+                {
+                    //console.log("cookieAuth username: " + cUser.username);
+                    sails.log.debug("AuthenticationController/check, cookieAuth username: " + cUser.username);
+
+                    authData.hasCoockie = true;
+                    //authData.hasSession = false;
+                    authData.username = cUser.username;
+                    authData.sessionKey = req.session.sessionkey;
+                    authData.authenticated = true;
+                    authData.code = 0;
+                    authData.message = "0: Coockie successfully identified";
+                    authData.error = "0: Coockie successfully identified";
+
+                    //return next();
+                } else
+                {
+                    //console.log("cookieAuth, problem with user: " + cUser);
+                    sails.log.debug("AuthenticationController/check, cookieAuth, problem with user: " + cUser);
+
+                    authData.hasCoockie = true;
+                    //authData.hasSession = false;
+                    authData.username = "";
+                    authData.sessionKey = "";
+                    authData.authenticated = false;
+                    authData.code = 4020;
+                    authData.message = "4020: Authentication problem";
+                    authData.error = "4020: Authentication problem";
+
+                    //return res.forbidden('You are not permitted to perform this action.');
+                }
 
 
-             });
+            });
 
-         } else
-         {
-             console.log("check, req.session.authenticated: " + req.session.authenticated);
-             //return res.forbidden('You are not permitted to perform this action.');
-             authStatus.code = 1080;
-             try {
-                 return res.json(authStatus);
-             } catch (ex)
-             {
-                 console.log("res.json(authStatus) problem (5090)");
-             }
-         }
+        } else
+        {
+            //console.log("cookieAuth, req.signedCookies.authenticated: " + req.cookies.authenticated);
+            sails.log.debug("AuthenticationController/check, req.signedCookies.authenticated: " + req.cookies.authenticated);
+
+            authData.hasCoockie = false;
+            //authData.hasSession = false;
+            authData.username = "";
+            authData.sessionKey = "";
+            authData.authenticated = false;
+            authData.code = 4030;
+            authData.message = "4030: Invalid coockie";
+            authData.error = "4030: Invalid coockie";
+
+            //return res.forbidden('You are not permitted to perform this action.');
+        }
+
+
+        if (req.session.authenticated) {
+
+            AppUser.findOne({sessionkey: req.session.sessionkey}, function (err, cUser) {
+
+                if (err !== null)
+                {
+                    //console.log("sessionAuth error: " + err);
+                    sails.log.debug("AuthenticationController/check, sessionAuth error: " + err);
+
+                    //authData.hasCoockie = false;
+                    authData.hasSession = true;
+                    authData.username = "";
+                    authData.sessionKey = "";
+                    authData.authenticated = false;
+                    authData.code = 4040;
+                    authData.message = "4040: Invalid session";
+                    authData.error = "4040: Invalid session";
+
+                    //return res.serverError("Error when finding user for authentication !!!");
+                }
+
+                if (cUser !== undefined)
+                {
+                    //console.log("sessionAuth username: " + cUser.username);
+                    sails.log.debug("AuthenticationController/check, username: " + cUser.username);
+
+                    //authData.hasCoockie = false;
+                    authData.hasSession = true;
+                    authData.username = cUser.username;
+                    authData.sessionKey = req.session.sessionkey;
+                    authData.authenticated = true;
+                    authData.code = 0;
+                    authData.message = "0: Session successfully identified";
+                    authData.error = "0: Session successfully identified";
+
+                    //return next();
+                } else
+                {
+                    //console.log("sessionAuth, problem with user: " + cUser);
+                    sails.log.debug("AuthenticationController/check, problem with user: " + cUser);
+
+                    //authData.hasCoockie = false;
+                    authData.hasSession = true;
+                    authData.username = "";
+                    authData.sessionKey = "";
+                    authData.authenticated = false;
+                    authData.code = 4050;
+                    authData.message = "4050: Session identification error";
+                    authData.error = "4050: Session identification error";
+
+                    //return res.forbidden('You are not permitted to perform this action.');
+                }
+
+
+            });
+
+        } else
+        {
+            //console.log("sessionAuth, req.session.authenticated: " + req.session.authenticated);
+            sails.log.debug("AuthenticationController/check, req.session.authenticated: " + req.session.authenticated);
+
+            //authData.hasCoockie = false;
+            authData.hasSession = false;
+            authData.username = "";
+            authData.sessionKey = "";
+            authData.authenticated = false;
+            authData.code = 4060;
+            authData.message = "4060: Session identification error";
+            authData.error = "4060: Session identification error";
+
+            //return res.forbidden('You are not permitted to perform this action.');
+        }
+        
+        return res.json(authData);
 
 
 

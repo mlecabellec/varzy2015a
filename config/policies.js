@@ -29,6 +29,14 @@ module.exports.policies = {
     '*': false,
     HomeController: {
         "index":true,
+        "data":true,
+        "*": "multiAuth1"
+    },
+    AuthenticationController: {
+        "index":true,
+        "login":true,
+        "check":true,
+        "registr":true,
         "*": "multiAuth1"
     }
 

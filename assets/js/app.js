@@ -123,10 +123,22 @@ this.APP["home"] = this.APP["home"] || {
         APP.loadedModules = APP.loadedModules.concat(APP.home.moduleInfo);
     },
     gui: {
-        init: function init(homeData) {
-            alert(homeData.message);
+        init: function init() {
+            
+            //load data provided by the home controller
+            $.getJSON("/home/data", function (data) {
+                APP.home.data = data;
+            });
+            
+            //load authentication status
+            $.getJSON("/authentication/check", function (data) {
+                APP.home.data.auth = data;
+            });
+            
+            
         }
-    }
+    },
+    data: {}
 };
 
 

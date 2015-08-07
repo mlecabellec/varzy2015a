@@ -1,7 +1,7 @@
 {
 	"Welcome": "Bienvenue",
 	"A brand new app.": "Une toute nouvelle application.",
-	"appName": "Varzy",
+	"appName": "ch4t0n",
 	"Log in": "Identification",
 	"User's name": "Identifiant",
 	"Password": "Mot de passe",
@@ -9,5 +9,10 @@
 	"Sign me": "S'identifier",
 	"Username": "Identifiant",
 	"cancel": "Annuler",
-	"appMOTD": "Tchat et partage sans prise de tête"
+	"appMOTD": "---",
+	"403: Forbidden access": "403: Access interdit",
+	"Forbidden": "Interdit",
+	"4060: Session identification error": "4060: Erreur de session",
+	"Home": "Home",
+	"Me !": "Me !"
 }
