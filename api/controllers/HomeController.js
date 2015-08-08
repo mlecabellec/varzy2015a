@@ -18,7 +18,15 @@ module.exports = {
 
 
         var data = {
-            message: "test001"
+            message: req.__('Welcome'),
+            i18n: {
+                loginModal: {loginLabel: __('Log in'),
+                    usernameLabel: __('Username'),
+                    passwordLabel: __('Password'),
+                    rememberMeLabel: __('Remember me'),
+                    signMeLabel: __('Sign me'),
+                    cancelLabel: __('cancel')}
+            }
         };
         sails.log.debug(data);
         return res.json(data);

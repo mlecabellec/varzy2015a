@@ -45,6 +45,10 @@ this.APP["login"] = this.APP["login"] || {
 
                         //TODO: wire events for login
 
+                        $("#loginModal").on('shown.bs.modal', function () {
+                            
+                        });
+
                         $("#loginModal").modal();
                     },
                     doJsonLogin: function doJsonLogin() {
@@ -124,18 +128,23 @@ this.APP["home"] = this.APP["home"] || {
     },
     gui: {
         init: function init() {
-            
+
             //load data provided by the home controller
             $.getJSON("/home/data", function (data) {
                 APP.home.data = data;
             });
-            
+
             //load authentication status
             $.getJSON("/authentication/check", function (data) {
                 APP.home.data.auth = data;
+                
+                if(!APP.home.data.auth.authenticated)
+                {
+                    //APP.login.gui.loginModal.openModal(i18n);
+                }
             });
-            
-            
+
+
         }
     },
     data: {}

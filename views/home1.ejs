@@ -38,9 +38,17 @@
 </div>
 
 <script type="text/javascript">
-    
-    $(document).ready(APP.home.gui.init());
-    
+
+            var i18n = {loginLabel: "<%= __('Log in') %>",
+                    usernameLabel: "<%= __('Username') %>",
+                    passwordLabel: "<%= __('Password') %>",
+                    rememberMeLabel: "<%= __('Remember me') %>",
+                    signMeLabel: "<%= __('Sign me') %>",
+                    cancelLabel: "<%= __('cancel') %>"};
+            
+            
+            $(document).ready(APP.home.gui.init());
+
 </script>
-        
+
 
