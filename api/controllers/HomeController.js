@@ -20,12 +20,12 @@ module.exports = {
         var data = {
             message: req.__('Welcome'),
             i18n: {
-                loginModal: {loginLabel: __('Log in'),
-                    usernameLabel: __('Username'),
-                    passwordLabel: __('Password'),
-                    rememberMeLabel: __('Remember me'),
-                    signMeLabel: __('Sign me'),
-                    cancelLabel: __('cancel')}
+                loginModal: {loginLabel: req.__('Log in'),
+                    usernameLabel: req.__('Username'),
+                    passwordLabel: req.__('Password'),
+                    rememberMeLabel: req.__('Remember me'),
+                    signMeLabel: req.__('Sign me'),
+                    cancelLabel: req.__('cancel')}
             }
         };
         sails.log.debug(data);

@@ -16,7 +16,7 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a id="meLink" href="#" onclick=""><%= __('Me !') %></a></li>
+                <li><a id="meLink" href="#"><%= __('Please log in !') %></a></li>
             </ul>
         </nav>
     </div>
@@ -38,14 +38,6 @@
 </div>
 
 <script type="text/javascript">
-
-            var i18n = {loginLabel: "<%= __('Log in') %>",
-                    usernameLabel: "<%= __('Username') %>",
-                    passwordLabel: "<%= __('Password') %>",
-                    rememberMeLabel: "<%= __('Remember me') %>",
-                    signMeLabel: "<%= __('Sign me') %>",
-                    cancelLabel: "<%= __('cancel') %>"};
-            
             
             $(document).ready(APP.home.gui.init());
 

@@ -37,16 +37,27 @@ this.APP["login"] = this.APP["login"] || {
         loginUrl: "",
         loginModal:
                 {
-                    openModal: function openModal(i18n) {
+                    openModal: function openModal() {
 
                         $("body").append(JST["assets/templates/login.html"](
-                                {i18n: i18n}
+                                {i18n: APP.home.data.i18n.loginModal}
                         ));
 
                         //TODO: wire events for login
 
+                        $("#signMeLoginButton").on("click", function () {
+                            alert("1");
+
+                        });
+
+                        $("#cancelLoginButton").on("click", function () {
+                            alert("2");
+
+                        });
+
+
                         $("#loginModal").on('shown.bs.modal', function () {
-                            
+
                         });
 
                         $("#loginModal").modal();
@@ -132,17 +143,25 @@ this.APP["home"] = this.APP["home"] || {
             //load data provided by the home controller
             $.getJSON("/home/data", function (data) {
                 APP.home.data = data;
+
+                //load authentication status
+                $.getJSON("/authentication/check", function (data) {
+                    APP.home.data.auth = data;
+
+                    if (!APP.home.data.auth.authenticated)
+                    {
+                        //APP.login.gui.loginModal.openModal(i18n);
+                        $("#meLink").on("click",function loginOnMeLink(){
+                            APP.login.gui.loginModal.openModal() ;
+                        });
+                    } else
+                    {
+                        //TODO ?
+                    }
+                });
             });
 
-            //load authentication status
-            $.getJSON("/authentication/check", function (data) {
-                APP.home.data.auth = data;
-                
-                if(!APP.home.data.auth.authenticated)
-                {
-                    //APP.login.gui.loginModal.openModal(i18n);
-                }
-            });
+
 
 
         }
