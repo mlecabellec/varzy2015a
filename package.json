@@ -5,6 +5,7 @@
   "description": "a Sails application",
   "keywords": [],
   "dependencies": {
+    "async": "^1.4.2",
     "ejs": "~0.8.4",
     "forever": "^0.15.0",
     "grunt": "0.4.2",
