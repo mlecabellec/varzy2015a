@@ -168,5 +168,6 @@ this.APP["home"] = this.APP["home"] || {
     },
     data: {}
 };
+APP.home.bootstrap();
 
 

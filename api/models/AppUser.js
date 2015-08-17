@@ -6,41 +6,56 @@
  */
 
 
- var cryptoJS = require("crypto-js");
+var cryptoJS = require("crypto-js");
+var uuid = require('node-uuid');
+var forge = require('node-forge');
 
- module.exports = {
-     attributes: {
-         username: {type: 'string', size: 64, minLength: 4, unique: true, primaryKey: true},
-         password: {type: 'string', size: 180, required: true, protected: true},
-         sessionkey: {type: 'string', size: 180, required: true, protected: true, unique: true},
-         isActive: {type: 'boolean', defaultsTo: true},
-         isAdmin: {type: 'boolean', defaultsTo: false},
-         email: {type: 'email', size: 180, minLength: 4, unique: true, required: true},
-         hitCount:{type: 'integer', defaultsTo: 0,required: true},
-         profiles:{
-             collection: 'UserProfile',
-             via: 'user'
-         }
-     },
-     beforeCreate: function (values, cb) {
+module.exports = {
+    attributes: {
+        username: {type: 'string', size: 64, minLength: 4, unique: true, primaryKey: true},
+        password: {type: 'string', size: 180, required: true, protected: true},
+        sessionkey: {type: 'string', size: 180, required: true, protected: true, unique: true},
+        isActive: {type: 'boolean', defaultsTo: true},
+        isAdmin: {type: 'boolean', defaultsTo: false},
+        email: {type: 'email', size: 180, minLength: 4, unique: true, required: true},
+        hitCount: {type: 'integer', defaultsTo: 0, required: true},
+        profiles: {
+            collection: 'UserProfile',
+            via: 'user'
+        },
+        userLists: {
+            collection: 'AppUserList',
+            via: 'owner'
+        },
+        userThreads: {
+            collection: 'UserThread',
+            via: 'owner'
+        },
+        userMessages: {
+            collection: 'UserMessage',
+            via: 'user'
+        },
+        lastModifiedDate: {type: 'datetime', defaultsTo: new Date()}
+    },
+    beforeCreate: function (values, cb) {
 
-         values.sessionkey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
+        values.sessionkey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
 
-         cb();
+        cb();
 
-     },
-     beforeUpdate: function (values, cb) {
+    },
+    beforeUpdate: function (values, cb) {
 
-         values.sessionkey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
+        values.sessionkey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
 
-         cb();
+        cb();
 
-     },
-     beforeValidate: function (values, cb) {
+    },
+    beforeValidate: function (values, cb) {
 
-         values.sessionkey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
+        values.sessionkey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
 
-         cb();
+        cb();
 
-     }
- };
+    }
+};
