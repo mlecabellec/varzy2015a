@@ -12,10 +12,31 @@ var forge = require('node-forge');
 module.exports = {
 
   attributes: {
-      creationDate:{type:'datetime',required:true,defaultsTo:new Date()},
       logSource:{type:'string',required:true,defaultTo:'Unknown',size:80},
       logLevel:{type:'integer',required:true,defaultTo:99},
-      logMessage:{type:'string',required:true,defaultTo:'NO MESSAGE !!!',size:4000}
-  }
+      logMessage:{type:'string',required:true,defaultTo:'NO MESSAGE !!!',size:4000},
+      uuid: {type: 'string', size: 40, required:true,unique:true}
+  },
+    beforeCreate: function (values, cb) {
+
+        values.uuid = uuid.v1();
+
+        cb();
+
+    },
+    beforeUpdate: function (values, cb) {
+
+        cb();
+
+    },
+    beforeValidate: function (values, cb) {
+        
+        if (values.uuid == undefined || values.uuid == null)
+        {
+            values.uuid = uuid.v1();
+        }
+        cb();
+
+    }
 };
 

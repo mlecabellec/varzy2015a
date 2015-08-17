@@ -9,6 +9,10 @@
  * http://sailsjs.org/#!/documentation/reference/sails.config/sails.config.bootstrap.html
  */
 
+var cryptoJS = require("crypto-js");
+var uuid = require('node-uuid');
+var forge = require('node-forge');
+
 module.exports.bootstrap = function(cb) {
 
   // It's very important to trigger this callback method when you are finished

@@ -35,10 +35,11 @@ module.exports = {
             collection: 'UserMessage',
             via: 'user'
         },
-        lastModifiedDate: {type: 'datetime', defaultsTo: new Date()}
+        uuid: {type: 'string', size: 40, required:true,unique:true}
     },
     beforeCreate: function (values, cb) {
-
+        
+        values.uuid = uuid.v1() ;
         values.sessionkey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
 
         cb();
@@ -52,6 +53,11 @@ module.exports = {
 
     },
     beforeValidate: function (values, cb) {
+
+        if (values.uuid == undefined || values.uuid == null)
+        {
+            values.uuid = uuid.v1();
+        }
 
         values.sessionkey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
 

@@ -11,9 +11,9 @@ var forge = require('node-forge');
 
 module.exports = {
     attributes: {
-        id:{type:"integer",unique:true,primaryKey:true},
         displayName: {type: 'string', size: 64, minLength: 4,required:true,unique:true},
         user: {model: "AppUser",protected:true,required:true,unique:true},
+        isPublic:{type: 'boolean', defaultsTo: false},
         profileLists: {
             collection: 'AppUserList',
             via: 'ownerProfile'
@@ -26,5 +26,28 @@ module.exports = {
             collection: 'UserMessage',
             via: 'userProfile'
         },
+        uuid: {type: 'string', size: 40, required:true,unique:true}
+    },
+    beforeCreate: function (values, cb) {
+
+        values.uuid = uuid.v1();
+
+        cb();
+
+    },
+    beforeUpdate: function (values, cb) {
+
+        cb();
+
+    },
+    beforeValidate: function (values, cb) {
+
+        if (values.uuid == undefined || values.uuid == null)
+        {
+            values.uuid = uuid.v1();
+        }
+
+        cb();
+
     }
 };

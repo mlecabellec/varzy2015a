@@ -11,13 +11,36 @@ var forge = require('node-forge');
 
 module.exports = {
     attributes: {
-        id:{type:"integer",unique:true,primaryKey:true,autoIncrement: true},
         title: {type: 'string', size: 200},
         owner:{model:'AppUser'},
         ownerProfile:{model:'UserProfile'},
+        isPublic:{type: 'boolean', defaultsTo: false},
         messages: {
             collection: 'UserMessage',
             via: 'thread'
+        },
+        uuid: {type: 'string', size: 40, required:true,unique:true}
+    },
+    beforeCreate: function (values, cb) {
+
+        values.uuid = uuid.v1();
+
+        cb();
+
+    },
+    beforeUpdate: function (values, cb) {
+
+        cb();
+
+    },
+    beforeValidate: function (values, cb) {
+
+        if (values.uuid == undefined || values.uuid == null)
+        {
+            values.uuid = uuid.v1();
         }
+
+        cb();
+
     }
 };
