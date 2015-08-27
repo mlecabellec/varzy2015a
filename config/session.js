@@ -67,12 +67,18 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
+  //adapter: 'mongo',
+  //host: 'ds055822.mongolab.com',
+  //port: 55822,
+  //db: 'test2015a',
+  //collection: 'sessions',
+  //url:'mongodb://test2015a:test2015a@ds055822.mongolab.com:55822/test2015a',
   adapter: 'mongo',
-  host: 'ds055822.mongolab.com',
-  port: 55822,
+  host: 'localhost',
+  port: 27017,
   db: 'test2015a',
   collection: 'sessions',
-  url:'mongodb://test2015a:test2015a@ds055822.mongolab.com:55822/test2015a',
+  url:'mongodb://test2015a:test2015a@localhost:27017/test2015a',
 
   /***************************************************************************
   *                                                                          *

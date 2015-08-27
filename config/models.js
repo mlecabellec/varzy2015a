@@ -17,7 +17,7 @@ module.exports.models = {
   * connections (see `config/connections.js`)                                *
   *                                                                          *
   ***************************************************************************/
-  connection: 'mongoTest2015aDb',
+  connection: 'mongoTest2015aDbTest',
 
   /***************************************************************************
   *                                                                          *
