@@ -11,14 +11,6 @@ var forge = require('node-forge');
 
 module.exports = {
     /**
-     * `AuthenticationController.index()`
-     */
-    index: function (req, res) {
-        return res.json({
-            todo: 'index() is not implemented yet!'
-        });
-    },
-    /**
      * `AuthenticationController.login()`
      */
     login: function (givenUsername, givenPassword) {
@@ -37,12 +29,29 @@ module.exports = {
 
         if (givenUsername === null || givenUsername === undefined)
         {
+            
+            authData.hasSession = false;
+        authData.username = "";
+        authData.sessionKey = "";
+        authData.authenticated = false;
+        authData.code = 5010;
+        authData.message = "5010: Bad or missing username" ;
+        authData.error = "5010: Bad or missing username" ;
+
             return authData;
 
         }
 
         if (givenPassword === null || givenPassword === undefined)
         {
+                authData.hasSession = false;
+        authData.username = "";
+        authData.sessionKey = "";
+        authData.authenticated = false;
+        authData.code = 5020;
+        authData.message = "5020: Bad or missing password" ;
+        authData.error = "5020: Bad or missing password" ;
+
             return authData;
         }
 
@@ -60,17 +69,17 @@ module.exports = {
             if (cUser !== undefined)
             {
                 console.log("login, user found: " + cUser.username);
-                req.session.authenticated = true;
-                req.session.sessionkey = cUser.sessionkey;
-                req.session.username = cUser.username;
+                //req.session.authenticated = true;
+                //req.session.sessionkey = cUser.sessionkey;
+                //req.session.username = cUser.username ;
 
                 //req.signedCookies.authenticated = true;
                 //req.signedCookies.sessionkey = cUser.sessionkey;
                 //req.signedCookies.username = cUser.username;
 
-                res.cookie('authenticated', true);
-                res.cookie('sessionkey', cUser.sessionkey);
-                res.cookie('username', cUser.username);
+                //res.cookie('authenticated', true);
+                //res.cookie('sessionkey', cUser.sessionkey);
+                //res.cookie('username', cUser.username);
 
 
                 console.log("login, req.session.authenticated: " + req.session.authenticated);
