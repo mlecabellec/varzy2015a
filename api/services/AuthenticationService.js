@@ -23,17 +23,27 @@ module.exports = {
      */
     login: function (givenUsername, givenPassword) {
 
+        var authData = {
+            hasCoockie: false,
+            hasSession: false,
+            username: "",
+            sessionKey: "",
+            authenticated: false,
+            code: 9999,
+            message: "",
+            error: ""
+        };
 
 
         if (givenUsername === null || givenUsername === undefined)
         {
-            return false;
-           
+            return authData;
+
         }
 
         if (givenPassword === null || givenPassword === undefined)
         {
-            return false;
+            return authData;
         }
 
 
@@ -44,12 +54,7 @@ module.exports = {
             if (err !== null)
             {
                 console.log("login error: " + err);
-                return res.json({
-                    message: "Login problem.",
-                    errorMessage: "Login problem. Please check this error: " + err,
-                    code: 3020,
-                    err: err
-                });
+                return authData;
             }
 
             if (cUser !== undefined)
@@ -77,23 +82,12 @@ module.exports = {
                 console.log("login, req.cookies.sessionkey: " + req.cookies.sessionkey);
                 console.log("login, req.cookies.username: " + req.cookies.username);
 
-                return res.json({
-                    message: "Login OK.",
-                    errorMessage: "",
-                    code: 0,
-                    username: cUser.username,
-                    authenticated: true
-                });
+                return authData;
 
             } else
             {
                 console.log("login, problem with user: " + cUser);
-                return res.json({
-                    message: "Login problem.",
-                    errorMessage: "Login problem. Please check this error: " + err,
-                    code: 3040,
-                    err: err
-                });
+                return authData;
             }
 
         });
@@ -114,11 +108,7 @@ module.exports = {
         req.session.username = "";
 
 
-        return res.json({
-            message: "Logged out. Goodbye !",
-            errorMessage: "",
-            code: 0
-        });
+        return authData;
     },
     /**
      * `AuthenticationController.register()`
