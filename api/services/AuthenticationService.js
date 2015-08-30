@@ -29,14 +29,14 @@ module.exports = {
 
         if (givenUsername === null || givenUsername === undefined)
         {
-            
+
             authData.hasSession = false;
-        authData.username = "";
-        authData.sessionKey = "";
-        authData.authenticated = false;
-        authData.code = 5010;
-        authData.message = "5010: Bad or missing username" ;
-        authData.error = "5010: Bad or missing username" ;
+            authData.username = "";
+            authData.sessionKey = "";
+            authData.authenticated = false;
+            authData.code = 5010;
+            authData.message = "5010: Bad or missing username";
+            authData.error = "5010: Bad or missing username";
 
             return authData;
 
@@ -44,13 +44,13 @@ module.exports = {
 
         if (givenPassword === null || givenPassword === undefined)
         {
-                authData.hasSession = false;
-        authData.username = "";
-        authData.sessionKey = "";
-        authData.authenticated = false;
-        authData.code = 5020;
-        authData.message = "5020: Bad or missing password" ;
-        authData.error = "5020: Bad or missing password" ;
+            authData.hasSession = false;
+            authData.username = "";
+            authData.sessionKey = "";
+            authData.authenticated = false;
+            authData.code = 5020;
+            authData.message = "5020: Bad or missing password";
+            authData.error = "5020: Bad or missing password";
 
             return authData;
         }
@@ -63,6 +63,15 @@ module.exports = {
             if (err !== null)
             {
                 console.log("login error: " + err);
+
+                authData.hasSession = false;
+                authData.username = "";
+                authData.sessionKey = "";
+                authData.authenticated = false;
+                authData.code = 5030;
+                authData.message = "5030: User not found";
+                authData.error = "5030: User not found";
+
                 return authData;
             }
 
@@ -91,11 +100,28 @@ module.exports = {
                 console.log("login, req.cookies.sessionkey: " + req.cookies.sessionkey);
                 console.log("login, req.cookies.username: " + req.cookies.username);
 
+                authData.hasSession = false;
+                authData.username = cUser.username;
+                authData.sessionKey = "";
+                authData.authenticated = true;
+                authData.code = 0;
+                authData.message = "0: Authenticated";
+                authData.error = "0: Authenticated";
+
                 return authData;
 
             } else
             {
                 console.log("login, problem with user: " + cUser);
+
+                authData.hasSession = false;
+                authData.username = cUser.username;
+                authData.sessionKey = "";
+                authData.authenticated = true;
+                authData.code = 5060;
+                authData.message = "5060: Login problem";
+                authData.error = "0: Login problem";
+
                 return authData;
             }
 
@@ -116,6 +142,14 @@ module.exports = {
         req.session.sessionkey = "";
         req.session.username = "";
 
+
+        authData.hasSession = false;
+        authData.username = cUser.username;
+        authData.sessionKey = "";
+        authData.authenticated = true;
+        authData.code = 5060;
+        authData.message = "5060: Login problem";
+        authData.error = "0: Login problem";
 
         return authData;
     },
