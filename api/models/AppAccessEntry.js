@@ -11,11 +11,14 @@ var forge = require('node-forge');
 
 module.exports = {
     attributes: {
-        uuid: {type: 'string', size: 40, required:true,unique:true}
+        uuid: {type: 'string', size: 40, required: true, unique: true}
     },
     beforeCreate: function (values, cb) {
 
-        values.uuid = uuid.v1();
+        if (values.uuid == undefined || values.uuid == null)
+        {
+            values.uuid = uuid.v1();
+        }
 
         cb();
 
@@ -26,7 +29,7 @@ module.exports = {
 
     },
     beforeValidate: function (values, cb) {
-        
+
         if (values.uuid == undefined || values.uuid == null)
         {
             values.uuid = uuid.v1();

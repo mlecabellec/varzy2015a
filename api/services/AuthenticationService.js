@@ -13,7 +13,7 @@ module.exports = {
     /**
      * `AuthenticationController.login()`
      */
-    login: function (givenUsername, givenPassword) {
+    login: function login(givenUsername, givenPassword) {
 
         var authData = {
             hasCoockie: false,
@@ -91,18 +91,25 @@ module.exports = {
                 //res.cookie('username', cUser.username);
 
 
-                console.log("login, req.session.authenticated: " + req.session.authenticated);
-                console.log("login, req.session.authenticated: " + req.session.authenticated);
-                console.log("login, req.session.sessionkey: " + req.session.sessionkey);
-                console.log("login, req.session.username: " + req.session.username);
+                //console.log("login, req.session.authenticated: " + req.session.authenticated);
+                //console.log("login, req.session.authenticated: " + req.session.authenticated);
+                //console.log("login, req.session.sessionkey: " + req.session.sessionkey);
+                //console.log("login, req.session.username: " + req.session.username);
 
-                console.log("login, req.cookies.authenticated: " + req.cookies.authenticated);
-                console.log("login, req.cookies.sessionkey: " + req.cookies.sessionkey);
-                console.log("login, req.cookies.username: " + req.cookies.username);
+
+                //console.log("login, req.cookies.authenticated: " + req.cookies.authenticated);
+                //console.log("login, req.cookies.sessionkey: " + req.cookies.sessionkey);
+                //console.log("login, req.cookies.username: " + req.cookies.username);
+
+                cUser.hitCount += 1;
+                cUser.sessionKey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
+                cUser.save(function savedUserHook(err, savedUser) {
+                    //TODO ?
+                });
 
                 authData.hasSession = false;
                 authData.username = cUser.username;
-                authData.sessionKey = "";
+                authData.sessionKey = cUser.sessionKey;
                 authData.authenticated = true;
                 authData.code = 0;
                 authData.message = "0: Authenticated";
@@ -117,10 +124,10 @@ module.exports = {
                 authData.hasSession = false;
                 authData.username = cUser.username;
                 authData.sessionKey = "";
-                authData.authenticated = true;
+                authData.authenticated = false;
                 authData.code = 5060;
                 authData.message = "5060: Login problem";
-                authData.error = "0: Login problem";
+                authData.error = "5060: Login problem";
 
                 return authData;
             }
@@ -132,79 +139,9 @@ module.exports = {
     /**
      * `AuthenticationController.logout()`
      */
-    logout: function (req, res) {
-
-        res.clearCookie('authenticated');
-        res.clearCookie('sessionkey');
-        res.clearCookie('username');
-
-        req.session.authenticated = true;
-        req.session.sessionkey = "";
-        req.session.username = "";
+    logout: function logout(givenUsername, givenSessionKey) {
 
 
-        authData.hasSession = false;
-        authData.username = cUser.username;
-        authData.sessionKey = "";
-        authData.authenticated = true;
-        authData.code = 5060;
-        authData.message = "5060: Login problem";
-        authData.error = "0: Login problem";
-
-        return authData;
-    },
-    /**
-     * `AuthenticationController.register()`
-     */
-    register: function (req, res) {
-
-        res.clearCookie('authenticated');
-        res.clearCookie('sessionkey');
-        res.clearCookie('username');
-
-        req.session.authenticated = true;
-        req.session.sessionkey = "";
-        req.session.username = "";
-
-        var givenUsername = req.param("username");
-        var givenPassword1 = req.param("password1");
-        var givenPassword2 = req.param("password2");
-        var givenEmail = req.param("email");
-
-
-
-        var newUser = {username: givenUsername, password: cryptoJS.SHA256(givenPassword1).toString(cryptoJS.enc.Base64), isActive: true, isAdmin: false, email: givenEmail};
-
-        AppUser.create(newUser).exec(function (err, record) {
-
-            if (err !== null)
-            {
-                console.log("Registration error: " + err);
-                return res.json({
-                    message: "Registration problem.",
-                    errorMessage: "Registration problem. Please check this error: " + err,
-                    code: 3080,
-                    err: err
-                });
-            } else
-            {
-                return res.json({
-                    message: "Registration OK.",
-                    errorMessage: "",
-                    code: 0,
-                    err: err
-                });
-            }
-
-
-
-        });
-
-    },
-    /**
-     * `AuthenticationController.check()`
-     */
-    check: function (req, res) {
 
         var authData = {
             hasCoockie: false,
@@ -218,162 +155,342 @@ module.exports = {
         };
 
 
-        //ultiAuth1, sails.sid: " + sails.sid);
-        sails.log.debug("AuthenticationController/check, sails.sid: " + sails.sid);
-
-        if (req.cookies.authenticated) {
-
-            AppUser.findOne({sessionkey: req.cookies.sessionkey}, function (err, cUser) {
-
-                if (err !== null)
-                {
-                    //console.log("cookieAuth error: " + err);
-                    sails.log.debug("AuthenticationController/check, cookieAuth error: " + err);
-
-                    authData.hasCoockie = true;
-                    //authData.hasSession = false;
-                    //authData.username="";
-                    //authData.sessionKey= "";
-                    authData.authenticated = false;
-                    authData.code = 4010;
-                    authData.message = "4010: Invalid session";
-                    authData.error = "4010: Invalid session";
-
-                    //return res.serverError("Error when finding user for authentication !!!");
-                }
-
-                if (cUser !== undefined)
-                {
-                    //console.log("cookieAuth username: " + cUser.username);
-                    sails.log.debug("AuthenticationController/check, cookieAuth username: " + cUser.username);
-
-                    authData.hasCoockie = true;
-                    //authData.hasSession = false;
-                    authData.username = cUser.username;
-                    authData.sessionKey = req.session.sessionkey;
-                    authData.authenticated = true;
-                    authData.code = 0;
-                    authData.message = "0: Coockie successfully identified";
-                    authData.error = "0: Coockie successfully identified";
-
-                    //return next();
-                } else
-                {
-                    //console.log("cookieAuth, problem with user: " + cUser);
-                    sails.log.debug("AuthenticationController/check, cookieAuth, problem with user: " + cUser);
-
-                    authData.hasCoockie = true;
-                    //authData.hasSession = false;
-                    authData.username = "";
-                    authData.sessionKey = "";
-                    authData.authenticated = false;
-                    authData.code = 4020;
-                    authData.message = "4020: Authentication problem";
-                    authData.error = "4020: Authentication problem";
-
-                    //return res.forbidden('You are not permitted to perform this action.');
-                }
-
-
-            });
-
-        } else
+        if (givenUsername === null || givenUsername === undefined)
         {
-            //console.log("cookieAuth, req.signedCookies.authenticated: " + req.cookies.authenticated);
-            sails.log.debug("AuthenticationController/check, req.signedCookies.authenticated: " + req.cookies.authenticated);
 
-            authData.hasCoockie = false;
-            //authData.hasSession = false;
-            authData.username = "";
-            authData.sessionKey = "";
-            authData.authenticated = false;
-            authData.code = 4030;
-            authData.message = "4030: Invalid coockie";
-            authData.error = "4030: Invalid coockie";
-
-            //return res.forbidden('You are not permitted to perform this action.');
-        }
-
-
-        if (req.session.authenticated) {
-
-            AppUser.findOne({sessionkey: req.session.sessionkey}, function (err, cUser) {
-
-                if (err !== null)
-                {
-                    //console.log("sessionAuth error: " + err);
-                    sails.log.debug("AuthenticationController/check, sessionAuth error: " + err);
-
-                    //authData.hasCoockie = false;
-                    authData.hasSession = true;
-                    authData.username = "";
-                    authData.sessionKey = "";
-                    authData.authenticated = false;
-                    authData.code = 4040;
-                    authData.message = "4040: Invalid session";
-                    authData.error = "4040: Invalid session";
-
-                    //return res.serverError("Error when finding user for authentication !!!");
-                }
-
-                if (cUser !== undefined)
-                {
-                    //console.log("sessionAuth username: " + cUser.username);
-                    sails.log.debug("AuthenticationController/check, username: " + cUser.username);
-
-                    //authData.hasCoockie = false;
-                    authData.hasSession = true;
-                    authData.username = cUser.username;
-                    authData.sessionKey = req.session.sessionkey;
-                    authData.authenticated = true;
-                    authData.code = 0;
-                    authData.message = "0: Session successfully identified";
-                    authData.error = "0: Session successfully identified";
-
-                    //return next();
-                } else
-                {
-                    //console.log("sessionAuth, problem with user: " + cUser);
-                    sails.log.debug("AuthenticationController/check, problem with user: " + cUser);
-
-                    //authData.hasCoockie = false;
-                    authData.hasSession = true;
-                    authData.username = "";
-                    authData.sessionKey = "";
-                    authData.authenticated = false;
-                    authData.code = 4050;
-                    authData.message = "4050: Session identification error";
-                    authData.error = "4050: Session identification error";
-
-                    //return res.forbidden('You are not permitted to perform this action.');
-                }
-
-
-            });
-
-        } else
-        {
-            //console.log("sessionAuth, req.session.authenticated: " + req.session.authenticated);
-            sails.log.debug("AuthenticationController/check, req.session.authenticated: " + req.session.authenticated);
-
-            //authData.hasCoockie = false;
             authData.hasSession = false;
             authData.username = "";
             authData.sessionKey = "";
             authData.authenticated = false;
-            authData.code = 4060;
-            authData.message = "4060: Session identification error";
-            authData.error = "4060: Session identification error";
+            authData.code = 5110;
+            authData.message = "5110: Bad or missing username";
+            authData.error = "5110: Bad or missing username";
 
-            //return res.forbidden('You are not permitted to perform this action.');
+            return authData;
+
         }
 
-        return res.json(authData);
+        if (givenSessionKey === null || givenSessionKey === undefined)
+        {
+            authData.hasSession = false;
+            authData.username = "";
+            authData.sessionKey = "";
+            authData.authenticated = false;
+            authData.code = 5120;
+            authData.message = "5120: Bad or missing session key";
+            authData.error = "5120: Bad or missing session key";
+
+            return authData;
+        }
 
 
+        var lookingForUser = {username: givenUsername, sessionKey: givenSessionKey, isActive: true};
+
+        AppUser.findOne(lookingForUser, function (err, cUser) {
+
+            if (err !== null)
+            {
+                console.log("login error: " + err);
+
+                authData.hasSession = false;
+                authData.username = "";
+                authData.sessionKey = "";
+                authData.authenticated = false;
+                authData.code = 5130;
+                authData.message = "5130: User not found";
+                authData.error = "5130: User not found";
+
+                return authData;
+            }
+
+            if (cUser !== undefined)
+            {
+                console.log("login, user found: " + cUser.username);
+                //req.session.authenticated = true;
+                //req.session.sessionkey = cUser.sessionkey;
+                //req.session.username = cUser.username ;
+
+                //req.signedCookies.authenticated = true;
+                //req.signedCookies.sessionkey = cUser.sessionkey;
+                //req.signedCookies.username = cUser.username;
+
+                //res.cookie('authenticated', true);
+                //res.cookie('sessionkey', cUser.sessionkey);
+                //res.cookie('username', cUser.username);
+
+
+                //console.log("login, req.session.authenticated: " + req.session.authenticated);
+                //console.log("login, req.session.authenticated: " + req.session.authenticated);
+                //console.log("login, req.session.sessionkey: " + req.session.sessionkey);
+                //console.log("login, req.session.username: " + req.session.username);
+
+
+                //console.log("login, req.cookies.authenticated: " + req.cookies.authenticated);
+                //console.log("login, req.cookies.sessionkey: " + req.cookies.sessionkey);
+                //console.log("login, req.cookies.username: " + req.cookies.username);
+
+                //cUser.hitCount += 1;
+                cUser.sessionKey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
+                cUser.save(function savedUserHook(err, savedUser) {
+                    //TODO ?
+                });
+
+                authData.hasSession = false;
+                authData.username = cUser.username;
+                authData.sessionKey = "";
+                authData.authenticated = false;
+                authData.code = 0;
+                authData.message = "0: OK";
+                authData.error = "0: OK";
+
+                return authData;
+
+            } else
+            {
+                console.log("logout, problem with user: " + cUser);
+
+                authData.hasSession = false;
+                authData.username = cUser.username;
+                authData.sessionKey = "";
+                authData.authenticated = false;
+                authData.code = 5160;
+                authData.message = "5160: Logout problem";
+                authData.error = "5160: Logout problem";
+
+                return authData;
+            }
+
+        });
+
+        //res.clearCookie('authenticated');
+        //res.clearCookie('sessionkey');
+        //res.clearCookie('username');
+
+        //req.session.authenticated = true;
+        //req.session.sessionkey = "";
+        //req.session.username = "";
 
     },
-    getticket: function (req, res)
+    /**
+     * `AuthenticationController.register()`
+     */
+    register: function register(givenUsername, givenPassword, givenEmail) {
+
+        //res.clearCookie('authenticated');
+        //res.clearCookie('sessionkey');
+        //res.clearCookie('username');
+
+        //req.session.authenticated = true;
+        //req.session.sessionkey = "";
+        //req.session.username = "";
+
+        //var givenUsername = req.param("username");
+        //var givenPassword1 = req.param("password1");
+        //var givenPassword2 = req.param("password2");
+        //var givenEmail = req.param("email");
+
+
+
+        var newUser = {username: givenUsername, password: cryptoJS.SHA256(givenPassword).toString(cryptoJS.enc.Base64), isActive: true, isAdmin: false, email: givenEmail};
+
+        AppUser.create(newUser).exec(function (err, record) {
+
+            if (err !== null)
+            {
+                console.log("Registration error: " + err);
+            } else
+            {
+                console.log("Registration seems OK: ");
+            }
+
+
+
+        });
+
+    },
+    /**
+     * `AuthenticationController.register()`
+     */
+    register2: function register2(givenUsername, givenPassword) {
+
+        //res.clearCookie('authenticated');
+        //res.clearCookie('sessionkey');
+        //res.clearCookie('username');
+
+        //req.session.authenticated = true;
+        //req.session.sessionkey = "";
+        //req.session.username = "";
+
+        //var givenUsername = req.param("username");
+        //var givenPassword1 = req.param("password1");
+        //var givenPassword2 = req.param("password2");
+        //var givenEmail = req.param("email");
+
+
+
+        var newUser = {username: givenUsername, password: cryptoJS.SHA256(givenPassword).toString(cryptoJS.enc.Base64), isActive: true, isAdmin: false};
+
+        AppUser.create(newUser).exec(function (err, record) {
+
+            if (err !== null)
+            {
+                console.log("Registration error: " + err);
+            } else
+            {
+                console.log("Registration seems OK: ");
+            }
+
+
+
+        });
+
+    },
+    /**
+     * `AuthenticationController.check()`
+     */
+    check: function (givenUsername, givenSessionKey) {
+
+
+
+        var authData = {
+            hasCoockie: false,
+            hasSession: false,
+            username: "",
+            sessionKey: "",
+            authenticated: false,
+            code: 9999,
+            message: "",
+            error: ""
+        };
+
+
+        if (givenUsername === null || givenUsername === undefined)
+        {
+
+            authData.hasSession = false;
+            authData.username = "";
+            authData.sessionKey = "";
+            authData.authenticated = false;
+            authData.code = 5210;
+            authData.message = "5210: Bad or missing username";
+            authData.error = "5210: Bad or missing username";
+
+            return authData;
+
+        }
+
+        if (givenSessionKey === null || givenSessionKey === undefined)
+        {
+            authData.hasSession = false;
+            authData.username = "";
+            authData.sessionKey = "";
+            authData.authenticated = false;
+            authData.code = 5220;
+            authData.message = "5220: Bad or missing session key";
+            authData.error = "5220: Bad or missing session key";
+
+            return authData;
+        }
+
+
+        var lookingForUser = {username: givenUsername, sessionKey: givenSessionKey, isActive: true};
+
+        AppUser.findOne(lookingForUser, function (err, cUser) {
+
+            if (err !== null)
+            {
+                console.log("login error: " + err);
+
+                authData.hasSession = false;
+                authData.username = "";
+                authData.sessionKey = "";
+                authData.authenticated = false;
+                authData.code = 5230;
+                authData.message = "5230: User not found";
+                authData.error = "5230: User not found";
+
+                return authData;
+            }
+
+            if (cUser !== undefined)
+            {
+                console.log("login, user found: " + cUser.username);
+                //req.session.authenticated = true;
+                //req.session.sessionkey = cUser.sessionkey;
+                //req.session.username = cUser.username ;
+
+                //req.signedCookies.authenticated = true;
+                //req.signedCookies.sessionkey = cUser.sessionkey;
+                //req.signedCookies.username = cUser.username;
+
+                //res.cookie('authenticated', true);
+                //res.cookie('sessionkey', cUser.sessionkey);
+                //res.cookie('username', cUser.username);
+
+
+                //console.log("login, req.session.authenticated: " + req.session.authenticated);
+                //console.log("login, req.session.authenticated: " + req.session.authenticated);
+                //console.log("login, req.session.sessionkey: " + req.session.sessionkey);
+                //console.log("login, req.session.username: " + req.session.username);
+
+
+                //console.log("login, req.cookies.authenticated: " + req.cookies.authenticated);
+                //console.log("login, req.cookies.sessionkey: " + req.cookies.sessionkey);
+                //console.log("login, req.cookies.username: " + req.cookies.username);
+
+                cUser.hitCount += 1;
+                //cUser.sessionKey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
+                cUser.save(function savedUserHook(err, savedUser) {
+                    //TODO ?
+                });
+
+                authData.hasSession = false;
+                authData.username = cUser.username;
+                authData.sessionKey = cUser.sessionKey;
+                authData.authenticated = true;
+                authData.code = 0;
+                authData.message = "0: OK";
+                authData.error = "0: OK";
+
+                return authData;
+
+            } else
+            {
+                console.log("logout, problem with user: " + cUser);
+
+                authData.hasSession = false;
+                authData.username = cUser.username;
+                authData.sessionKey = "";
+                authData.authenticated = false;
+                authData.code = 5260;
+                authData.message = "5260: check problem";
+                authData.error = "5260: check problem";
+
+                return authData;
+            }
+
+        });
+
+    },
+    getTicket: function getTicket()
+    {
+        var newTicket = {
+            validityStartingAt: new Date(),
+            validityEndingAt: new Date() + 20000,
+            ticketToken: uuid.v1(),
+            uuid: uuid.v1(),
+            owner: undefined,
+            ownerProfile: undefined
+        };
+        
+        //appTicket.create(newTicket);
+
+    },
+    getTicket2: function getTicket2(givenUsername, givenSessionKey)
+    {
+
+    },
+    verifyTicket: function verifyTicket(ticket)
     {
 
     }

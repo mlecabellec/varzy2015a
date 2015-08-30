@@ -12,13 +12,24 @@ var forge = require('node-forge');
 module.exports = {
     attributes: {
         validityStartingAt: {type: 'datetime', required: true, defaultsTo: new Date()},
-        validityEndingAt: {type: 'datetime', required: true, defaultsTo: new Date()},
+        validityEndingAt: {type: 'datetime', required: true, defaultsTo: new Date() + 20000},
         ticketToken: {type: 'string', required: true, size: 254, unique: true},
-        uuid: {type: 'string', size: 40, required:true,unique:true}
+        uuid: {type: 'string', size: 40, required: true, unique: true},
+        owner: {model: 'AppUser'},
+        ownerProfile: {model: 'UserProfile'}
     },
     beforeCreate: function (values, cb) {
 
-        values.uuid = uuid.v1();
+
+        if (values.uuid == undefined || values.uuid == null)
+        {
+            values.uuid = uuid.v1();
+        }
+
+        if (values.ticketToken == undefined || values.ticketToken == null)
+        {
+            values.ticketToken = uuid.v1();
+        }
 
         cb();
 
@@ -33,6 +44,11 @@ module.exports = {
         if (values.uuid == undefined || values.uuid == null)
         {
             values.uuid = uuid.v1();
+        }
+
+        if (values.ticketToken == undefined || values.ticketToken == null)
+        {
+            values.ticketToken = uuid.v1();
         }
 
         cb();

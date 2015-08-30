@@ -14,11 +14,14 @@ module.exports = {
         owner: {model: 'AppUser', required: true},
         ownerProfile: {model: 'UserProfile', required: true},
         listItems: {collection: 'AppUserListItem', via: 'sourceList'},
-        uuid: {type: 'string', size: 40, required:true,unique:true}
+        uuid: {type: 'string', size: 40, required: true, unique: true}
     },
     beforeCreate: function (values, cb) {
 
-        values.uuid = uuid.v1();
+        if (values.uuid == undefined || values.uuid == null)
+        {
+            values.uuid = uuid.v1();
+        }
 
         cb();
 

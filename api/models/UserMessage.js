@@ -15,12 +15,15 @@ module.exports = {
         user: {model: "AppUser", protected: true},
         userProfile: {model: "UserProfile"},
         thread: {model: "UserThread"},
-        isPublic:{type: 'boolean', defaultsTo: false},
-        uuid: {type: 'string', size: 40, required:true,unique:true}
+        isPublic: {type: 'boolean', defaultsTo: false},
+        uuid: {type: 'string', size: 40, required: true, unique: true}
     },
     beforeCreate: function (values, cb) {
 
-        values.uuid = uuid.v1();
+        if (values.uuid == undefined || values.uuid == null)
+        {
+            values.uuid = uuid.v1();
+        }
 
         cb();
 
@@ -36,7 +39,7 @@ module.exports = {
         {
             values.uuid = uuid.v1();
         }
-        
+
         cb();
 
     }

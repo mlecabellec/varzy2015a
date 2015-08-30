@@ -14,11 +14,14 @@ module.exports = {
         sourceList: {model: 'AppUserList', required: true},
         rankIndex: {type: 'integer', min: 0, defaultsTo: 1, required: true},
         memberItem: {model: 'AppUser', required: true},
-        uuid: {type: 'string', size: 40, required:true,unique:true}
+        uuid: {type: 'string', size: 40, required: true, unique: true}
     },
     beforeCreate: function (values, cb) {
 
-        values.uuid = uuid.v1();
+        if (values.uuid == undefined || values.uuid == null)
+        {
+            values.uuid = uuid.v1();
+        }
 
         cb();
 
