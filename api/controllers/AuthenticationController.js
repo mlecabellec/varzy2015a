@@ -33,7 +33,7 @@ module.exports = {
             hasCoockie: false,
             hasSession: false,
             username: "",
-            sessionKey: "",
+            sessionkey: "",
             authenticated: false,
             code: 9999,
             message: "",
@@ -46,7 +46,7 @@ module.exports = {
 
             authData.hasSession = false;
             authData.username = "";
-            authData.sessionKey = "";
+            authData.sessionkey = "";
             authData.authenticated = false;
             authData.code = 5010;
             authData.message = "5010: Bad or missing username";
@@ -60,7 +60,7 @@ module.exports = {
         {
             authData.hasSession = false;
             authData.username = "";
-            authData.sessionKey = "";
+            authData.sessionkey = "";
             authData.authenticated = false;
             authData.code = 5020;
             authData.message = "5020: Bad or missing password";
@@ -74,22 +74,29 @@ module.exports = {
 
         AppUser.findOne(lookingForUser, function afterUserLookup(err, cUser) {
 
-            if (err !== null)
+            if (err !== undefined && err !== null)
             {
                 console.log("login error: " + err);
 
                 authData.hasSession = false;
                 authData.username = "";
-                authData.sessionKey = "";
+                authData.sessionkey = "";
                 authData.authenticated = false;
                 authData.code = 5030;
                 authData.message = "5030: User not found";
                 authData.error = "5030: User not found";
 
                 return res.json(authData);
-            }else if (cUser !== undefined)
+            } else if (cUser !== undefined)
             {
                 console.log("login, user found: " + cUser.username);
+
+                cUser.hitCount += 1;
+                cUser.sessionkey = cryptoJS.SHA256(cUser.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
+                cUser.save(function savedUserHook(err, savedUser) {
+                    //TODO ?
+                });
+
                 req.session.authenticated = true;
                 req.session.sessionkey = cUser.sessionkey;
                 req.session.username = cUser.username;
@@ -113,16 +120,11 @@ module.exports = {
                 console.log("login, req.cookies.sessionkey: " + req.cookies.sessionkey);
                 console.log("login, req.cookies.username: " + req.cookies.username);
 
-                cUser.hitCount += 1;
-                cUser.sessionKey = cryptoJS.SHA256(cUser.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
-                cUser.save(function savedUserHook(err, savedUser) {
-                    //TODO ?
-                });
 
                 authData.hasSession = true;
-                authData.hasCoockie = true ;
+                authData.hasCoockie = true;
                 authData.username = cUser.username;
-                authData.sessionKey = cUser.sessionKey;
+                authData.sessionkey = cUser.sessionkey;
                 authData.authenticated = true;
                 authData.code = 0;
                 authData.message = "0: Authenticated";
@@ -136,8 +138,13 @@ module.exports = {
 
                 var lookingForAttackedUser = {username: givenUsername};
                 AppUser.findOne(lookingForAttackedUser, function whenAttackedUser(err, attackedUser) {
-                    if (err == null)
+                    if (err === undefined || err === null)
                     {
+                        if (attackedUser === undefined)
+                        {
+                            return;
+                        }
+
                         attackedUser.healthPoints = attackedUser.healthPoints - 5;
                         console.log("User: " + attackedUser.username + ", health: " + attackedUser.healthPoints);
                         attackedUser.save(function onHealthDecrease(err) {
@@ -156,8 +163,8 @@ module.exports = {
                 });
 
                 authData.hasSession = false;
-                authData.username = cUser.username;
-                authData.sessionKey = "";
+                authData.username = "";
+                authData.sessionkey = "";
                 authData.authenticated = false;
                 authData.code = 5060;
                 authData.message = "5060: Login problem";
@@ -177,13 +184,13 @@ module.exports = {
     logout: function logout(req, res) {
 
         var givenUsername = req.session.username;
-        var givenSessionKey = req.session.sessionKey;
+        var givenSessionKey = req.session.sessionkey;
 
         var authData = {
             hasCoockie: false,
             hasSession: false,
             username: "",
-            sessionKey: "",
+            sessionkey: "",
             authenticated: false,
             code: 9999,
             message: "",
@@ -196,7 +203,7 @@ module.exports = {
 
             authData.hasSession = false;
             authData.username = "";
-            authData.sessionKey = "";
+            authData.sessionkey = "";
             authData.authenticated = false;
             authData.code = 5110;
             authData.message = "5110: Bad or missing username";
@@ -210,7 +217,7 @@ module.exports = {
         {
             authData.hasSession = false;
             authData.username = "";
-            authData.sessionKey = "";
+            authData.sessionkey = "";
             authData.authenticated = false;
             authData.code = 5120;
             authData.message = "5120: Bad or missing session key";
@@ -220,24 +227,24 @@ module.exports = {
         }
 
 
-        var lookingForUser = {username: givenUsername, sessionKey: givenSessionKey, isActive: true};
+        var lookingForUser = {username: givenUsername, sessionkey: givenSessionKey, isActive: true};
 
         AppUser.findOne(lookingForUser, function (err, cUser) {
 
-            if (err !== null)
+            if (err !== undefined && err !== null)
             {
                 console.log("login error: " + err);
 
                 authData.hasSession = false;
                 authData.username = "";
-                authData.sessionKey = "";
+                authData.sessionkey = "";
                 authData.authenticated = false;
                 authData.code = 5130;
                 authData.message = "5130: User not found";
                 authData.error = "5130: User not found";
 
                 return res.json(authData);
-            }else if (cUser !== undefined)
+            } else if (cUser !== undefined)
             {
                 console.log("login, user found: " + cUser.username);
                 //req.session.authenticated = true;
@@ -264,14 +271,14 @@ module.exports = {
                 //console.log("login, req.cookies.username: " + req.cookies.username);
 
                 //cUser.hitCount += 1;
-                cUser.sessionKey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
+                cUser.sessionkey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
                 cUser.save(function savedUserHook(err, savedUser) {
                     //TODO ?
                 });
 
                 authData.hasSession = false;
                 authData.username = cUser.username;
-                authData.sessionKey = "";
+                authData.sessionkey = "";
                 authData.authenticated = false;
                 authData.code = 0;
                 authData.message = "0: OK";
@@ -293,8 +300,14 @@ module.exports = {
 
                 var lookingForAttackedUser = {username: givenUsername};
                 AppUser.findOne(lookingForAttackedUser, function whenAttackedUser(err, attackedUser) {
-                    if (err == null)
+                    if (err === undefined || err === null)
                     {
+
+                        if (attackedUser === undefined)
+                        {
+                            return;
+                        }
+
                         attackedUser.healthPoints = attackedUser.healthPoints - 5;
                         console.log("User: " + attackedUser.username + ", health: " + attackedUser.healthPoints);
                         attackedUser.save(function onHealthDecrease(err) {
@@ -314,7 +327,7 @@ module.exports = {
 
                 authData.hasSession = false;
                 authData.username = cUser.username;
-                authData.sessionKey = "";
+                authData.sessionkey = "";
                 authData.authenticated = false;
                 authData.code = 5160;
                 authData.message = "5160: Logout problem";
@@ -358,7 +371,7 @@ module.exports = {
 
         AppUser.create(newUser).exec(function (err, record) {
 
-            if (err !== null)
+            if (err !== undefined && err !== null)
             {
                 console.log("Registration error: " + err);
             } else
@@ -377,13 +390,13 @@ module.exports = {
     check: function checkAuth(req, res) {
 
         var givenUsername = req.session.username;
-        var givenSessionKey = req.session.sessionKey;
+        var givenSessionKey = req.session.sessionkey;
 
         var authData = {
             hasCoockie: false,
             hasSession: false,
             username: "",
-            sessionKey: "",
+            sessionkey: "",
             authenticated: false,
             code: 9999,
             message: "",
@@ -396,7 +409,7 @@ module.exports = {
 
             authData.hasSession = false;
             authData.username = "";
-            authData.sessionKey = "";
+            authData.sessionkey = "";
             authData.authenticated = false;
             authData.code = 5210;
             authData.message = "5210: Bad or missing username";
@@ -411,7 +424,7 @@ module.exports = {
         {
             authData.hasSession = false;
             authData.username = "";
-            authData.sessionKey = "";
+            authData.sessionkey = "";
             authData.authenticated = false;
             authData.code = 5220;
             authData.message = "5220: Bad or missing session key";
@@ -422,17 +435,17 @@ module.exports = {
         }
 
 
-        var lookingForUser = {username: givenUsername, sessionKey: givenSessionKey, isActive: true};
+        var lookingForUser = {username: givenUsername, sessionkey: givenSessionKey, isActive: true};
 
         AppUser.findOne(lookingForUser, function (err, cUser) {
 
-            if (err !== null)
+            if (err !== undefined && err !== null)
             {
                 console.log("login error: " + err);
 
                 authData.hasSession = false;
                 authData.username = "";
-                authData.sessionKey = "";
+                authData.sessionkey = "";
                 authData.authenticated = false;
                 authData.code = 5230;
                 authData.message = "5230: User not found";
@@ -440,7 +453,7 @@ module.exports = {
 
                 return res.json(authData);
 
-            }else if (cUser !== undefined)
+            } else if (cUser !== undefined)
             {
                 console.log("login, user found: " + cUser.username);
                 req.session.authenticated = true;
@@ -467,14 +480,14 @@ module.exports = {
                 console.log("login, req.cookies.username: " + req.cookies.username);
 
                 cUser.hitCount += 1;
-                //cUser.sessionKey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
+                //cUser.sessionkey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
                 cUser.save(function savedUserHook(err, savedUser) {
                     //TODO ?
                 });
 
                 authData.hasSession = false;
                 authData.username = cUser.username;
-                authData.sessionKey = cUser.sessionKey;
+                authData.sessionkey = cUser.sessionkey;
                 authData.authenticated = true;
                 authData.code = 0;
                 authData.message = "0: OK";
@@ -489,8 +502,13 @@ module.exports = {
 
                 var lookingForAttackedUser = {username: givenUsername};
                 AppUser.findOne(lookingForAttackedUser, function whenAttackedUser(err, attackedUser) {
-                    if (err == null)
+                    if (err === undefined || err === null)
                     {
+                        if (attackedUser === undefined)
+                        {
+                            return;
+                        }
+
                         attackedUser.healthPoints = attackedUser.healthPoints - 5;
                         console.log("User: " + attackedUser.username + ", health: " + attackedUser.healthPoints);
                         attackedUser.save(function onHealthDecrease(err) {
@@ -510,8 +528,8 @@ module.exports = {
 
 
                 authData.hasSession = false;
-                authData.username = cUser.username;
-                authData.sessionKey = "";
+                authData.username = "";
+                authData.sessionkey = "";
                 authData.authenticated = false;
                 authData.code = 5260;
                 authData.message = "5260: check problem";
@@ -528,7 +546,7 @@ module.exports = {
     {
         //TODO: implementig dual mode session or login+password
         var givenUsername = req.session.username;
-        var givenSessionKey = req.session.sessionKey;
+        var givenSessionKey = req.session.sessionkey;
 
         var newTicket = {
             validityStartingAt: new Date(),
@@ -544,15 +562,15 @@ module.exports = {
             //TODO ?
         });
 
-        var lookingForUser = {username: givenUsername, sessionKey: givenSessionKey, isActive: true};
+        var lookingForUser = {username: givenUsername, sessionkey: givenSessionKey, isActive: true};
 
         AppUser.findOne(lookingForUser, function (err, cUser) {
 
-            if (err !== null)
+            if (err !== undefined && err !== null)
             {
                 AppTicket.create(newTicket, function newTicketCb(err, createdTicket)
                 {
-                    if (err == null || err !== undefined)
+                    if (err === undefined || err === null)
                     {
                         return res.json(createdTicket);
                     } else
@@ -566,14 +584,14 @@ module.exports = {
 
 
 
-            }else if (cUser !== undefined)
+            } else if (cUser !== undefined)
             {
 
                 newTicket.owner = cUser.toJSON();
 
                 AppTicket.create(newTicket, function newTicketCb(err, createdTicket)
                 {
-                    if (err == null || err !== undefined)
+                    if (err === undefined || err === null)
                     {
                         return res.json(createdTicket);
                     } else
@@ -588,7 +606,7 @@ module.exports = {
             {
                 AppTicket.create(newTicket, function newTicketCb(err, createdTicket)
                 {
-                    if (err == null || err !== undefined)
+                    if (err === undefined || err === null)
                     {
                         return res.json(createdTicket);
                     } else
@@ -628,11 +646,11 @@ module.exports = {
 
         AppUser.findOne(lookingForUser, function (err, cUser) {
 
-            if (err !== null)
+            if (err !== undefined && err !== null)
             {
                 AppTicket.create(newTicket, function newTicketCb(err, createdTicket)
                 {
-                    if (err == null || err !== undefined)
+                    if (err === null || err === undefined)
                     {
                         return res.json(createdTicket);
                     } else
@@ -644,14 +662,14 @@ module.exports = {
 
                 });
 
-            }else if (cUser !== undefined)
+            } else if (cUser !== undefined)
             {
 
                 newTicket.owner = cUser.toJSON();
 
                 AppTicket.create(newTicket, function newTicketCb(err, createdTicket)
                 {
-                    if (err == null || err !== undefined)
+                    if (err === null || err === undefined)
                     {
                         return res.json(createdTicket);
                     } else
@@ -667,8 +685,13 @@ module.exports = {
 
                 var lookingForAttackedUser = {username: givenUsername};
                 AppUser.findOne(lookingForAttackedUser, function whenAttackedUser(err, attackedUser) {
-                    if (err == null)
+                    if (err === undefined || err === null)
                     {
+                        if (attackedUser === undefined)
+                        {
+                            return;
+                        }
+
                         attackedUser.healthPoints = attackedUser.healthPoints - 5;
                         console.log("User: " + attackedUser.username + ", health: " + attackedUser.healthPoints);
                         attackedUser.save(function onHealthDecrease(err) {
@@ -688,7 +711,7 @@ module.exports = {
 
                 AppTicket.create(newTicket, function newTicketCb(err, createdTicket)
                 {
-                    if (err == null || err !== undefined)
+                    if (err === undefined || err === null)
                     {
                         return res.json(createdTicket);
                     } else
@@ -707,6 +730,6 @@ module.exports = {
     verifyticket: function verifyTicket(req, res)
     {
         //var givenUsername = req.session.username;
-        //var givenSessionKey = req.session.sessionKey;
+        //var givenSessionKey = req.session.sessionkey;
     }
 };

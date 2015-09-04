@@ -22,7 +22,7 @@ module.exports = function (req, res, next) {
         hasCoockie: false,
         hasSession: false,
         username: "",
-        sessionKey: "",
+        sessionkey: "",
         authenticated: false,
         code: 9999,
         message:"",
@@ -45,7 +45,7 @@ module.exports = function (req, res, next) {
                 authData.hasCoockie = true;
                 //authData.hasSession = false;
                 //authData.username="";
-                //authData.sessionKey= "";
+                //authData.sessionkey= "";
                 authData.authenticated = false;
                 authData.code = 4010;
                 authData.message = "4010: Invalid session" ;
@@ -62,7 +62,7 @@ module.exports = function (req, res, next) {
                 authData.hasCoockie = true;
                 //authData.hasSession = false;
                 authData.username = cUser.username;
-                authData.sessionKey = req.session.sessionkey;
+                authData.sessionkey = req.session.sessionkey;
                 authData.authenticated = true;
                 authData.code = 0;
                 authData.message = "0: Coockie successfully identified" ;
@@ -77,7 +77,7 @@ module.exports = function (req, res, next) {
                 authData.hasCoockie = true;
                 //authData.hasSession = false;
                 authData.username = "";
-                authData.sessionKey = "";
+                authData.sessionkey = "";
                 authData.authenticated = false;
                 authData.code = 4020;
                 authData.message = "4020: Authentication problem" ;
@@ -97,7 +97,7 @@ module.exports = function (req, res, next) {
         authData.hasCoockie = false;
         //authData.hasSession = false;
         authData.username = "";
-        authData.sessionKey = "";
+        authData.sessionkey = "";
         authData.authenticated = false;
         authData.code = 4030;
         authData.message = "4030: Invalid coockie" ;
@@ -119,7 +119,7 @@ module.exports = function (req, res, next) {
                 //authData.hasCoockie = false;
                 authData.hasSession = true;
                 authData.username = "";
-                authData.sessionKey = "";
+                authData.sessionkey = "";
                 authData.authenticated = false;
                 authData.code = 4040;
                 authData.message = "4040: Invalid session" ;
@@ -136,7 +136,7 @@ module.exports = function (req, res, next) {
                 //authData.hasCoockie = false;
                 authData.hasSession = true;
                 authData.username = cUser.username;
-                authData.sessionKey = req.session.sessionkey;
+                authData.sessionkey = req.session.sessionkey;
                 authData.authenticated = true;
                 authData.code = 0;
                 authData.message = "0: Session successfully identified" ;
@@ -151,7 +151,7 @@ module.exports = function (req, res, next) {
                 //authData.hasCoockie = false;
                 authData.hasSession = true;
                 authData.username = "";
-                authData.sessionKey = "";
+                authData.sessionkey = "";
                 authData.authenticated = false;
                 authData.code = 4050;
                 authData.message = "4050: Session identification error" ;
@@ -171,7 +171,7 @@ module.exports = function (req, res, next) {
         //authData.hasCoockie = false;
         authData.hasSession = false;
         authData.username = "";
-        authData.sessionKey = "";
+        authData.sessionkey = "";
         authData.authenticated = false;
         authData.code = 4060;
         authData.message = "4060: Session identification error" ;
