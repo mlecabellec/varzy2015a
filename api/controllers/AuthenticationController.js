@@ -1,3 +1,5 @@
+/* global AppUser, AppTicket */
+
 /**
  * AuthenticationController
  *
@@ -14,9 +16,9 @@ module.exports = {
      * `AuthenticationController.index()`
      */
     index: function index(req, res) {
-        return res.json({
-            todo: 'index() is not implemented yet!'
-        });
+
+        res.render({view: 'index'});
+
     },
     /**
      * `AuthenticationController.login()`
@@ -336,7 +338,7 @@ module.exports = {
 
         var givenUsername = req.session.username;
         var givenSessionKey = req.session.sessionKey;
-        
+
         var authData = {
             hasCoockie: false,
             hasSession: false,
@@ -361,7 +363,7 @@ module.exports = {
             authData.error = "5210: Bad or missing username";
 
             return res.json(authData);
-            ;
+
 
         }
 
@@ -376,7 +378,7 @@ module.exports = {
             authData.error = "5220: Bad or missing session key";
 
             return res.json(authData);
-            ;
+
         }
 
 
@@ -397,7 +399,7 @@ module.exports = {
                 authData.error = "5230: User not found";
 
                 return res.json(authData);
-                ;
+
             }
 
             if (cUser !== undefined)
@@ -441,7 +443,7 @@ module.exports = {
                 authData.error = "0: OK";
 
                 return res.json(authData);
-                ;
+
 
             } else
             {
@@ -456,7 +458,7 @@ module.exports = {
                 authData.error = "5260: check problem";
 
                 return res.json(authData);
-                ;
+
             }
 
         });
@@ -464,6 +466,10 @@ module.exports = {
     },
     getticket: function getTicket(req, res)
     {
+        //TODO: implementig dual mode session or login+password
+        var givenUsername = req.session.username;
+        var givenSessionKey = req.session.sessionKey;
+
         var newTicket = {
             validityStartingAt: new Date(),
             validityEndingAt: new Date() + 20000,
@@ -473,14 +479,76 @@ module.exports = {
             ownerProfile: undefined
         };
 
-        //appTicket.create(newTicket);
-    },
-    getTicket2: function getTicket2(req, res)
-    {
+
+        AppTicket.destroy({where: {validityEndingAt: {'<': new Date()}}, skip: 0, limit: 1000, sort: 'validityEndingAt ASC'}).exec(function ackTicketsDestroyed(err, deletedTickets) {
+            //TODO ?
+        });
+
+        var lookingForUser = {username: givenUsername, sessionKey: givenSessionKey, isActive: true};
+
+        AppUser.findOne(lookingForUser, function (err, cUser) {
+
+            if (err !== null)
+            {
+                AppTicket.create(newTicket, function newTicketCb(err, createdTicket)
+                {
+                    if (err == null || err !== undefined)
+                    {
+                        return res.json(createdTicket);
+                    } else
+                    {
+                        return res.serverError();
+
+                        //TODO ?
+                    }
+
+                });
+
+
+
+            }
+
+            if (cUser !== undefined)
+            {
+
+                newTicket.owner = cUser.toJSON();
+
+                AppTicket.create(newTicket, function newTicketCb(err, createdTicket)
+                {
+                    if (err == null || err !== undefined)
+                    {
+                        return res.json(createdTicket);
+                    } else
+                    {
+                        return res.serverError();
+                        //TODO ?
+                    }
+
+                });
+
+            } else
+            {
+                AppTicket.create(newTicket, function newTicketCb(err, createdTicket)
+                {
+                    if (err == null || err !== undefined)
+                    {
+                        return res.json(createdTicket);
+                    } else
+                    {
+                        return res.serverError();
+                        //TODO ?
+                    }
+
+                });
+
+            }
+        });
+
 
     },
     verifyTicket: function verifyTicket(req, res)
     {
-
+        var givenUsername = req.session.username;
+        var givenSessionKey = req.session.sessionKey;
     }
 };

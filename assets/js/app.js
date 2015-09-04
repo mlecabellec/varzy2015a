@@ -46,12 +46,17 @@ this.APP["login"] = this.APP["login"] || {
                         //TODO: wire events for login
 
                         $("#signMeLoginButton").on("click", function () {
-                            alert("1");
+                            var givenUsername = $("#inputUsername").val();
+                            var givenPassword = $("#inputPassword").val();
+                            APP.login.gui.loginModal.doJsonLogin(givenUsername, givenPassword);
+
+
+
 
                         });
 
                         $("#cancelLoginButton").on("click", function () {
-                            alert("2");
+                            //alert("2");
 
                         });
 
@@ -62,7 +67,25 @@ this.APP["login"] = this.APP["login"] || {
 
                         $("#loginModal").modal();
                     },
-                    doJsonLogin: function doJsonLogin() {
+                    doJsonLogin: function doJsonLogin(givenUsername, givenPassword) {
+
+                        //load authentication status
+                        $.getJSON("/authentication/check", function checkAuth1(data) {
+                            APP.login.data = data;
+
+                            if (!APP.login.data.authenticated)
+                            {
+                                //TODO ?
+                                $.getJSON("/authentication/getticket", function getTicket1(data) {
+                                    var newTicket = data ;
+                                    APP.login.tickets = APP.login.tickets.concat(newTicket) ;
+                                });
+
+                            } else
+                            {
+                                //TODO ?
+                            }
+                        });
                     },
                     jsonLoginCb: function jsonLoginCb() {
                     },
@@ -76,7 +99,9 @@ this.APP["login"] = this.APP["login"] || {
                     checkAuth: function () {
                     }
                 }
-    }
+    },
+    data: {},
+    tickets: [] 
 };
 APP.login.bootstrap();
 
@@ -106,6 +131,17 @@ this.APP["debug"] = this.APP["debug"] || {
             },
     bootstrap: function bootstrap() {
         APP.loadedModules = APP.loadedModules.concat(APP.debug.moduleInfo);
+        if (APP.debug.enabled)
+        {
+            APP.debug.debugKit.init();
+        }
+    },
+    enabled: true,
+    debugKit: {
+        init: function initDebugKit()
+        {
+
+        }
     }
 };
 APP.debug.bootstrap();
@@ -151,8 +187,8 @@ this.APP["home"] = this.APP["home"] || {
                     if (!APP.home.data.auth.authenticated)
                     {
                         //APP.login.gui.loginModal.openModal(i18n);
-                        $("#meLink").on("click",function loginOnMeLink(){
-                            APP.login.gui.loginModal.openModal() ;
+                        $("#meLink").on("click", function loginOnMeLink() {
+                            APP.login.gui.loginModal.openModal();
                         });
                     } else
                     {

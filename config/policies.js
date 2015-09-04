@@ -36,7 +36,8 @@ module.exports.policies = {
         "index":true,
         "login":true,
         "check":true,
-        "registr":true,
+        "register":true,
+        "getticket":true,
         "*": "multiAuth1"
     }
 

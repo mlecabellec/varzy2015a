@@ -32,8 +32,8 @@
     "skipper-gridfs": "^0.5.3"
   },
   "scripts": {
-    "debug": "node debug app.js",
-    "start": "node app.js debug"
+    "debug": "node debug app.js --dev --verbose",
+    "start": "node app.js --dev --verbose"
   },
   "main": "app.js",
   "repository": {
