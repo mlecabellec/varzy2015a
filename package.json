@@ -32,8 +32,8 @@
     "skipper-gridfs": "^0.5.3"
   },
   "scripts": {
-    "debug": "node debug app.js --dev --verbose",
-    "start": "node app.js --dev --verbose"
+    "debug": "node node_modules\/sails\/bin\/sails.js lift --dev --verbose",
+    "start": "node node_modules\/sails\/bin\/sails.js lift --dev --verbose"
   },
   "main": "app.js",
   "repository": {
