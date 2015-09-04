@@ -27,6 +27,7 @@ module.exports = {
 
         var givenUsername = req.param("username");
         var givenPassword = req.param("password");
+        var givenTicket = req.param("ticket"); //UUID
 
         var authData = {
             hasCoockie: false,
@@ -86,9 +87,7 @@ module.exports = {
                 authData.error = "5030: User not found";
 
                 return res.json(authData);
-            }
-
-            if (cUser !== undefined)
+            }else if (cUser !== undefined)
             {
                 console.log("login, user found: " + cUser.username);
                 req.session.authenticated = true;
@@ -115,12 +114,13 @@ module.exports = {
                 console.log("login, req.cookies.username: " + req.cookies.username);
 
                 cUser.hitCount += 1;
-                cUser.sessionKey = cryptoJS.SHA256(values.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
+                cUser.sessionKey = cryptoJS.SHA256(cUser.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
                 cUser.save(function savedUserHook(err, savedUser) {
                     //TODO ?
                 });
 
-                authData.hasSession = false;
+                authData.hasSession = true;
+                authData.hasCoockie = true ;
                 authData.username = cUser.username;
                 authData.sessionKey = cUser.sessionKey;
                 authData.authenticated = true;
@@ -133,6 +133,27 @@ module.exports = {
             } else
             {
                 console.log("login, problem with user: " + cUser);
+
+                var lookingForAttackedUser = {username: givenUsername};
+                AppUser.findOne(lookingForAttackedUser, function whenAttackedUser(err, attackedUser) {
+                    if (err == null)
+                    {
+                        attackedUser.healthPoints = attackedUser.healthPoints - 5;
+                        console.log("User: " + attackedUser.username + ", health: " + attackedUser.healthPoints);
+                        attackedUser.save(function onHealthDecrease(err) {
+                            //TODO ?
+                        });
+                        AppUser.update({where: {healthPoints: {'<': 0}}}, {isActive: false}, function afterDisablingUsers(err, disabledUsers) {
+                            disabledUsers.forEach(function logDisabledUsers(cDisabledUser, cIndex, allDisabledUsers) {
+                                console.log("Disabled user for security reasons: " + cDisabledUser.username);
+                            });
+                        });
+                    } else
+                    {
+                        console.log("attack check error: " + err);
+                    }
+
+                });
 
                 authData.hasSession = false;
                 authData.username = cUser.username;
@@ -216,9 +237,7 @@ module.exports = {
                 authData.error = "5130: User not found";
 
                 return res.json(authData);
-            }
-
-            if (cUser !== undefined)
+            }else if (cUser !== undefined)
             {
                 console.log("login, user found: " + cUser.username);
                 //req.session.authenticated = true;
@@ -271,6 +290,27 @@ module.exports = {
             } else
             {
                 console.log("logout, problem with user: " + cUser);
+
+                var lookingForAttackedUser = {username: givenUsername};
+                AppUser.findOne(lookingForAttackedUser, function whenAttackedUser(err, attackedUser) {
+                    if (err == null)
+                    {
+                        attackedUser.healthPoints = attackedUser.healthPoints - 5;
+                        console.log("User: " + attackedUser.username + ", health: " + attackedUser.healthPoints);
+                        attackedUser.save(function onHealthDecrease(err) {
+                            //TODO ?
+                        });
+                        AppUser.update({where: {healthPoints: {'<': 0}}}, {isActive: false}, function afterDisablingUsers(err, disabledUsers) {
+                            disabledUsers.forEach(function logDisabledUsers(cDisabledUser, cIndex, allDisabledUsers) {
+                                console.log("Disabled user for security reasons: " + cDisabledUser.username);
+                            });
+                        });
+                    } else
+                    {
+                        console.log("attack check error: " + err);
+                    }
+
+                });
 
                 authData.hasSession = false;
                 authData.username = cUser.username;
@@ -400,9 +440,7 @@ module.exports = {
 
                 return res.json(authData);
 
-            }
-
-            if (cUser !== undefined)
+            }else if (cUser !== undefined)
             {
                 console.log("login, user found: " + cUser.username);
                 req.session.authenticated = true;
@@ -448,6 +486,28 @@ module.exports = {
             } else
             {
                 console.log("logout, problem with user: " + cUser);
+
+                var lookingForAttackedUser = {username: givenUsername};
+                AppUser.findOne(lookingForAttackedUser, function whenAttackedUser(err, attackedUser) {
+                    if (err == null)
+                    {
+                        attackedUser.healthPoints = attackedUser.healthPoints - 5;
+                        console.log("User: " + attackedUser.username + ", health: " + attackedUser.healthPoints);
+                        attackedUser.save(function onHealthDecrease(err) {
+                            //TODO ?
+                        });
+                        AppUser.update({where: {healthPoints: {'<': 0}}}, {isActive: false}, function afterDisablingUsers(err, disabledUsers) {
+                            disabledUsers.forEach(function logDisabledUsers(cDisabledUser, cIndex, allDisabledUsers) {
+                                console.log("Disabled user for security reasons: " + cDisabledUser.username);
+                            });
+                        });
+                    } else
+                    {
+                        console.log("attack check error: " + err);
+                    }
+
+                });
+
 
                 authData.hasSession = false;
                 authData.username = cUser.username;
@@ -506,9 +566,7 @@ module.exports = {
 
 
 
-            }
-
-            if (cUser !== undefined)
+            }else if (cUser !== undefined)
             {
 
                 newTicket.owner = cUser.toJSON();
@@ -546,9 +604,109 @@ module.exports = {
 
 
     },
-    verifyTicket: function verifyTicket(req, res)
+    getticket2: function getTicket2(req, res)
     {
-        var givenUsername = req.session.username;
-        var givenSessionKey = req.session.sessionKey;
+
+        var givenUsername = req.param("username");
+        var givenPassword = req.param("password");
+
+        var newTicket = {
+            validityStartingAt: new Date(),
+            validityEndingAt: new Date() + 20000,
+            ticketToken: uuid.v1(),
+            uuid: uuid.v1(),
+            owner: undefined,
+            ownerProfile: undefined
+        };
+
+
+        AppTicket.destroy({where: {validityEndingAt: {'<': new Date()}}, skip: 0, limit: 1000, sort: 'validityEndingAt ASC'}).exec(function ackTicketsDestroyed(err, deletedTickets) {
+            //TODO ?
+        });
+
+        var lookingForUser = {username: givenUsername, password: cryptoJS.SHA256(givenPassword).toString(cryptoJS.enc.Base64), isActive: true};
+
+        AppUser.findOne(lookingForUser, function (err, cUser) {
+
+            if (err !== null)
+            {
+                AppTicket.create(newTicket, function newTicketCb(err, createdTicket)
+                {
+                    if (err == null || err !== undefined)
+                    {
+                        return res.json(createdTicket);
+                    } else
+                    {
+                        return res.serverError();
+
+                        //TODO ?
+                    }
+
+                });
+
+            }else if (cUser !== undefined)
+            {
+
+                newTicket.owner = cUser.toJSON();
+
+                AppTicket.create(newTicket, function newTicketCb(err, createdTicket)
+                {
+                    if (err == null || err !== undefined)
+                    {
+                        return res.json(createdTicket);
+                    } else
+                    {
+                        return res.serverError();
+                        //TODO ?
+                    }
+
+                });
+
+            } else
+            {
+
+                var lookingForAttackedUser = {username: givenUsername};
+                AppUser.findOne(lookingForAttackedUser, function whenAttackedUser(err, attackedUser) {
+                    if (err == null)
+                    {
+                        attackedUser.healthPoints = attackedUser.healthPoints - 5;
+                        console.log("User: " + attackedUser.username + ", health: " + attackedUser.healthPoints);
+                        attackedUser.save(function onHealthDecrease(err) {
+                            //TODO ?
+                        });
+                        AppUser.update({where: {healthPoints: {'<': 0}}}, {isActive: false}, function afterDisablingUsers(err, disabledUsers) {
+                            disabledUsers.forEach(function logDisabledUsers(cDisabledUser, cIndex, allDisabledUsers) {
+                                console.log("Disabled user for security reasons: " + cDisabledUser.username);
+                            });
+                        });
+                    } else
+                    {
+                        console.log("attack check error: " + err);
+                    }
+
+                });
+
+                AppTicket.create(newTicket, function newTicketCb(err, createdTicket)
+                {
+                    if (err == null || err !== undefined)
+                    {
+                        return res.json(createdTicket);
+                    } else
+                    {
+                        return res.serverError();
+                        //TODO ?
+                    }
+
+                });
+
+            }
+        });
+
+
+    },
+    verifyticket: function verifyTicket(req, res)
+    {
+        //var givenUsername = req.session.username;
+        //var givenSessionKey = req.session.sessionKey;
     }
 };
