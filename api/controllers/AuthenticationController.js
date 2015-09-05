@@ -92,6 +92,7 @@ module.exports = {
                 console.log("login, user found: " + cUser.username);
 
                 cUser.hitCount += 1;
+                cUser.healthPoints += 5;
                 cUser.sessionkey = cryptoJS.SHA256(cUser.username + Math.ceil(Math.random() * 2 ^ 32 + Math.random() * 2 ^ 13)).toString(cryptoJS.enc.Base64);
                 cUser.save(function savedUserHook(err, savedUser) {
                     //TODO ?
@@ -587,6 +588,7 @@ module.exports = {
             } else if (cUser !== undefined)
             {
 
+                newTicket.validityEndingAt = cUser.healthPoints * cUser.healthPoints * 1000 ;
                 newTicket.owner = cUser.toJSON();
 
                 AppTicket.create(newTicket, function newTicketCb(err, createdTicket)
@@ -665,6 +667,7 @@ module.exports = {
             } else if (cUser !== undefined)
             {
 
+                newTicket.validityEndingAt = cUser.healthPoints * cUser.healthPoints * 1000 ;
                 newTicket.owner = cUser.toJSON();
 
                 AppTicket.create(newTicket, function newTicketCb(err, createdTicket)

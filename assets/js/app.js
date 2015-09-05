@@ -209,11 +209,15 @@ this.APP["home"] = this.APP["home"] || {
                     }
                 });
             });
-
-
-
-
         }
+    },
+    toolKit: {
+        sendMessage: function sendMessage(content,isPublic,ThreadUuid) {
+            
+        },
+        getMyThreads: function getMyThreads() {},
+        getPublicThreads: function getPublicThreads() {},
+        getMessagesFromThread: function getMessagesFromThread() {}
     },
     data: {}
 };

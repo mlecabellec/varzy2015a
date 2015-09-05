@@ -5,6 +5,8 @@
  */
 
 
+/* global AppUser, sails */
+
 /**
  * multiAuth1
  *
@@ -33,11 +35,11 @@ module.exports = function (req, res, next) {
     //ultiAuth1, sails.sid: " + sails.sid);
     sails.log.debug("multiAuth1, sails.sid: " + sails.sid);
 
-    if (req.cookies.authenticated) {
+    if (req.cookies.authenticated && !authData.authenticated) {
 
         AppUser.findOne({sessionkey: req.cookies.sessionkey}, function (err, cUser) {
 
-            if (err !== null)
+            if (err !== null &&  err !== undefined )
             {
                 //console.log("cookieAuth error: " + err);
                 sails.log.debug("multiAuth1, cookieAuth error: " + err);
@@ -52,9 +54,7 @@ module.exports = function (req, res, next) {
                 authData.error = "4010: Invalid session" ;
 
                 //return res.serverError("Error when finding user for authentication !!!");
-            }
-
-            if (cUser !== undefined)
+            }else if (cUser !== undefined)
             {
                 //console.log("cookieAuth username: " + cUser.username);
                 sails.log.debug("multiAuth1, cookieAuth username: " + cUser.username);
@@ -107,11 +107,11 @@ module.exports = function (req, res, next) {
     }
 
 
-    if (req.session.authenticated) {
+    if (req.session.authenticated && !authData.authenticated) {
 
         AppUser.findOne({sessionkey: req.session.sessionkey}, function (err, cUser) {
 
-            if (err !== null)
+            if (err !== null && err !== undefined )
             {
                 //console.log("sessionAuth error: " + err);
                 sails.log.debug("multiAuth1, sessionAuth error: " + err);
@@ -126,9 +126,7 @@ module.exports = function (req, res, next) {
                 authData.error = "4040: Invalid session" ;
 
                 //return res.serverError("Error when finding user for authentication !!!");
-            }
-
-            if (cUser !== undefined)
+            }else if (cUser !== undefined)
             {
                 //console.log("sessionAuth username: " + cUser.username);
                 sails.log.debug("multiAuth1, username: " + cUser.username);
