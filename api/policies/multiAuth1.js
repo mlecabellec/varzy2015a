@@ -5,7 +5,7 @@
  */
 
 
-/* global AppUser, sails */
+/* global AppUser, sails, ticket */
 
 /**
  * multiAuth1
@@ -23,6 +23,7 @@ module.exports = function (req, res, next) {
     var authData = {
         hasCoockie: false,
         hasSession: false,
+        wasTicket : false,
         username: "",
         sessionkey: "",
         authenticated: false,
@@ -229,4 +230,49 @@ module.exports = function (req, res, next) {
             sails.log.warn("multiAuth1, dead end 4360");
         }
     }
+    
+    if (req.param(ticket) !== undefined && !authData.authenticated) {
+
+        AppTicket.findOne({where:{uuid: req.param(ticket), owner:{"!":undefined}}}, function (err, cTicket) {
+
+            if (err !== null && err !== undefined)
+            {
+                //console.log("sessionAuth error: " + err);
+                sails.log.debug("multiAuth1, ticketAuth error: " + err);
+
+
+                if (!authData.authenticated && !req.cookies.authenticated && !req.session.authenticated)
+                {
+                    //authData.hasCoockie = false;
+                    authData.hasSession = true;
+                    authData.username = "";
+                    authData.sessionkey = "";
+                    authData.authenticated = false;
+                    authData.code = 4080;
+                    authData.message = "4080: Invalid session";
+                    authData.error = "4080: Invalid session";
+
+                    return res.forbidden({data: authData});
+                } else
+                {
+                    sails.log.warn("multiAuth1, dead end 4410");
+                }
+
+
+                //return res.serverError("Error when finding user for authentication !!!");
+            } else if (cTicket !== undefined)
+            {
+                    //TODO
+            } else
+            {
+                //TODO
+            }
+        });
+    } else
+    {
+        //TODO
+    }    
+    
+    
+    
 };
