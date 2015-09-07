@@ -64,6 +64,9 @@ module.exports = function (req, res, next) {
                     authData.error = "4010: Invalid session";
 
                     return res.forbidden({data: authData});
+                } else
+                {
+                    sails.log.warn("multiAuth1, dead end 4310");
                 }
 
                 //return res.serverError("Error when finding user for authentication !!!");
@@ -100,6 +103,9 @@ module.exports = function (req, res, next) {
                     authData.error = "4020: Authentication problem";
 
                     return res.forbidden({data: authData});
+                } else
+                {
+                    sails.log.warn("multiAuth1, dead end 4320");
                 }
             }
         });
@@ -120,6 +126,9 @@ module.exports = function (req, res, next) {
             authData.error = "4030: Invalid coockie";
 
             return res.forbidden({data: authData});
+        } else
+        {
+            sails.log.warn("multiAuth1, dead end 4330");
         }
     }
 
@@ -146,6 +155,9 @@ module.exports = function (req, res, next) {
                     authData.error = "4040: Invalid session";
 
                     return res.forbidden({data: authData});
+                } else
+                {
+                    sails.log.warn("multiAuth1, dead end 4340");
                 }
 
 
@@ -190,6 +202,9 @@ module.exports = function (req, res, next) {
                     authData.error = "4050: Session identification error";
 
                     return res.forbidden({data: authData});
+                } else
+                {
+                    sails.log.warn("multiAuth1, dead end 4350");
                 }
             }
         });
@@ -209,6 +224,9 @@ module.exports = function (req, res, next) {
             authData.error = "4060: Session identification error";
 
             return res.forbidden({data: authData});
+        } else
+        {
+            sails.log.warn("multiAuth1, dead end 4360");
         }
     }
 };
