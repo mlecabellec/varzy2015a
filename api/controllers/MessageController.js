@@ -32,10 +32,19 @@ module.exports = {
   /**
    * `MessageController.getPublicThreads()`
    */
-  publicThreads: function (req, res) {
+  publicthreads: function (req, res) {
     return res.json({
       todo: 'getPublicThreads() is not implemented yet!'
     });
-  }
+  },
+   /**
+   * `MessageController.getPublicThreads()`
+   */
+  publicmessages: function (req, res) {
+    return res.json({
+      todo: 'publicMessages() is not implemented yet!'
+    });
+  } 
+  
 };
 
