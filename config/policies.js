@@ -40,6 +40,12 @@ module.exports.policies = {
         "getticket":true,
         "getticket2":true,
         "*": "multiAuth1"
+    },
+    MessageController: {
+        "*": "multiAuth1",
+        "publicmessages":"multiAuth1",
+        "publicthreads":"multiAuth1",
+        
     }
 
 
