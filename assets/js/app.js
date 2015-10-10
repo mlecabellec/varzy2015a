@@ -212,8 +212,27 @@ this.APP["home"] = this.APP["home"] || {
         }
     },
     toolKit: {
-        sendMessage: function sendMessage(content,isPublic,ThreadUuid) {
-            
+        sendMessage: function sendMessage(content, isPublic, ThreadUuid) {
+            var newMessage = {
+                content: content, isPublic: isPublic};
+
+
+            $.getJSON("/authentication/getticket", function getTicket1(data) {
+                var newTicket = data;
+                APP.login.tickets = APP.login.tickets.concat(newTicket);
+
+                var requestData =
+                        {
+                            message: newMessage,
+                            ticket: newTicket.uuid
+                        };
+                        
+                    
+
+
+            });
+
+
         },
         getMyThreads: function getMyThreads() {},
         getPublicThreads: function getPublicThreads() {},
